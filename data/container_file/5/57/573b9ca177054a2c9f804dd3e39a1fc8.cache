@@ -1,0 +1,32 @@
+(dp1
+S'session'
+p2
+(dp3
+S'username'
+p4
+S'ml'
+p5
+sS'navbar'
+p6
+(lp7
+(S'Home'
+S'/'
+tp8
+a(S'Enter a new case'
+S'/newcase'
+tp9
+a(S'Search for a new case'
+S'/searchcase'
+tp10
+a(S'Register'
+p11
+S'/register'
+p12
+tp13
+asS'_accessed_time'
+p14
+F1354403757.930747
+sS'_creation_time'
+p15
+F1354403702.313941
+ss.
