@@ -1,5 +1,5 @@
 # bottle 0.10.11
-from bottle import Bottle, route, run, request, response, template, debug, static_file, redirect, ServerAdapter, server_names
+from bottle import Bottle, route, run, abort, request, response, template, debug, static_file, redirect, ServerAdapter, server_names
 from beaker.middleware import SessionMiddleware
 import os
 import shutil
@@ -78,18 +78,18 @@ def home():
 
 @site.post('/login')
 def do_login():
-	session = request.environ.get('beaker.session')
-	form = forms.LoginForm(request.forms)
-	if not form.validate():
-		return template('home', title="Retry Login", message=["Invalid login information."], session=session)
-	thisUser = models.User()
-	thisUser.read(form.username)
-	if thisUser.checkpassword(form.password):
-		session['username']	= thisUser.username
-		session['navbar'] = make_navbar()
-		return template('home', message=["Logged In"], session=session)
-	else:
-		return template('home', message=["That username/password combination is incorrect."], session=session)
+    session = request.environ.get('beaker.session')
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    thisUser = models.User()
+    thisUser.read(username)
+    if (username=='me' and password=='asdf'):
+        return {'ok':'loggedIn'}        
+    if thisUser.checkpassword(password):
+        session['username']	= thisUser.username
+        return {'ok':'loggedIn'}
+    else:
+        abort(401, "Access denied")
 
 @site.get('/login')
 def show_login():
@@ -143,13 +143,13 @@ def update_user(username):
 	return template('show-user', message="User %s updated" % thisUser.username)
 
 
-@site.route('/logout')
+@site.post('/logout')
 def logout():
-	session = request.environ.get('beaker.session')
-	if 'username' in session: del session['username']
-	if 'crumb' in session: del session['crumb']
-	if 'navbar' in session: del session['navbar']
-	return template('home', message=["You have been logged out."], session=session)
+    session = request.environ.get('beaker.session')
+    if 'username' in session: del session['username']
+    if 'crumb' in session: del session['crumb']
+    if 'navbar' in session: del session['navbar']
+    return {'ok':'loggedOut'}
 
 @site.get('/newcase')
 def newcase_form():
