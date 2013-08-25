@@ -61,6 +61,10 @@ def serve_usr_img(username):
 		else:
 			return static_file('francis.jpg',root='./usr_img')
 
+@site.get('/bb')
+def bb():
+  return static_file('index.html',root=".")
+    
 @site.get('/')
 def index():
 	session = request.environ.get('beaker.session')
@@ -335,7 +339,11 @@ server_names['sslcherrypy'] = SSLCherryPy
 debug(True)
 if __name__ == '__main__':
 	# wwh
-	run(app=app, host='localhost', port=443, reloader=True, server='sslcherrypy')
+	# run(app=app, host='localhost', port=443, reloader=True, server='sslcherrypy')
 	
 	# localhost
-	# run(app=app, host='localhost', port=443, reloader=True, server='sslcherrypy')
+	# run(app=app, host='0.0.0.0', port=3000, reloader=True, server='sslcherrypy')
+  
+  # localhost without ssl
+  run(app=app, host='0.0.0.0', port=3000, reloader=True)
+  

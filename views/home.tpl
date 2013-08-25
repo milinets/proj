@@ -9,9 +9,9 @@
 <div class="row-fluid well pagination-centered">
 	<h2>Case of the Month</h2>
 	<h5>November</h5>
-	<img src="http://placekitten.com/g/320/300">
-	<img src="http://placekitten.com/g/320/300">
-	<img src="http://placekitten.com/g/320/300">
+	<img src="http://placedog.com/g/320/300">
+	<img src="http://placedog.com/g/320/300">
+	<img src="http://placedog.com/g/320/300">
 </div>
 
 <div class="row-fluid pagination-centered">
