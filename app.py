@@ -12,6 +12,7 @@ import json
 from collections import namedtuple
 import forms
 import models
+from cork import Cork
 
 site = Bottle()
 session_opts = {
@@ -23,6 +24,7 @@ session_opts = {
 }
 
 app = SessionMiddleware(site, session_opts)
+aaa = Cork('example_conf')
 
 def make_navbar():
     navbar = [('Home','/'),('Enter a new case','/newcase'),
@@ -78,23 +80,29 @@ def home():
 
 @site.post('/login')
 def do_login():
-    session = request.environ.get('beaker.session')
     username = request.POST.get('username')
     password = request.POST.get('password')
-    thisUser = models.User()
-    thisUser.read(username)
-    if (username=='me' and password=='asdf'):
-        return {'ok':'loggedIn'}        
-    if thisUser.checkpassword(password):
-        session['username']	= thisUser.username
-        return {'ok':'loggedIn'}
+    if aaa.login(username,password):
+        print "logging in" + username+password
+        return {'ok','loggedIn'}
     else:
         abort(401, "Access denied")
 
-@site.get('/login')
+@site.post('/logout')
+def logout():
+    if aaa.logout():
+        print "logged out"
+        return {'ok':'loggedOut'}
+    else:
+        log("logout didn't work")
+        return {'error':"logout didn't work"}
+
+@site.get('/bb/login')
 def show_login():
-	session = request.environ.get('beaker.session')
-	return template('home',message=["Logged in as %s" % session["username"]],session=session)
+    try:
+        return {username: aaa.current_user.username}
+    except:
+        abort(401, "Not logged in")
 
 @site.get('/register')
 def signup_form():
@@ -143,13 +151,6 @@ def update_user(username):
 	return template('show-user', message="User %s updated" % thisUser.username)
 
 
-@site.post('/logout')
-def logout():
-    session = request.environ.get('beaker.session')
-    if 'username' in session: del session['username']
-    if 'crumb' in session: del session['crumb']
-    if 'navbar' in session: del session['navbar']
-    return {'ok':'loggedOut'}
 
 @site.get('/newcase')
 def newcase_form():
@@ -343,7 +344,6 @@ if __name__ == '__main__':
 	
 	# localhost
 	# run(app=app, host='0.0.0.0', port=3000, reloader=True, server='sslcherrypy')
-  
-  # localhost without ssl
-  run(app=app, host='0.0.0.0', port=3000, reloader=True)
-  
+
+    # localhost without ssl
+    run(app=app, host='0.0.0.0', port=3000, reloader=True)

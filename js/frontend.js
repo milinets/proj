@@ -100,9 +100,33 @@ UserModel = Backbone.Model.extend({
                 console.log("logged out "+JSON.stringify(ctx.model.attributes));
             }
         });
+    },
+    is_logged_in : function(ctx) {
+        $.ajax({
+            type : "GET",
+            url : '/login',
+            success : function(data) {
+                ctx.set('loggedIn',true);
+            },
+            error : function(data) {
+                ctx.set('loggedIn',false);
+            }
+        });
     }
 });
 
-window.user = new UserModel({username:'me',loggedIn:true});
+window.user = new UserModel({});
 window.login_view = new LoginView({ el: $('#login_container'),model:window.user});
 window.search_view = new SearchView({ el: $('#main_container') });
+
+var AppRouter = Backbone.Router.extend({
+        routes: {
+            "login": "checklogin"
+        }
+    });
+
+// Initiate the router
+var app_router = new AppRouter;
+app_router.on("checklogin", function() {
+    window.user.is_logged_in(window.user);
+});
