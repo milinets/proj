@@ -24,7 +24,7 @@ session_opts = {
 }
 
 app = SessionMiddleware(site, session_opts)
-aaa = Cork('example_conf')
+cork = Cork('example_conf')
 
 def make_navbar():
     navbar = [('Home','/'),('Enter a new case','/newcase'),
@@ -63,12 +63,12 @@ def serve_usr_img(username):
 		else:
 			return static_file('francis.jpg',root='./usr_img')
 
-@site.get('/bb')
-def bb():
-  return static_file('index.html',root=".")
-    
 @site.get('/')
 def index():
+  return static_file('index.html',root=".")
+    
+@site.get('/oldsite')
+def oldindex():
 	session = request.environ.get('beaker.session')
 	return template('home', title="Home Page", session=session, message=[])
 	interval = session['_accessed_time'] - (session.last_accessed or 0)
@@ -82,7 +82,7 @@ def home():
 def do_login():
     username = request.POST.get('username')
     password = request.POST.get('password')
-    if aaa.login(username,password):
+    if cork.login(username,password):
         print "logging in" + username+password
         return {'ok','loggedIn'}
     else:
@@ -90,7 +90,7 @@ def do_login():
 
 @site.post('/logout')
 def logout():
-    if aaa.logout():
+    if cork.current_user.logout():
         print "logged out"
         return {'ok':'loggedOut'}
     else:
@@ -100,7 +100,7 @@ def logout():
 @site.get('/bb/login')
 def show_login():
     try:
-        return {username: aaa.current_user.username}
+        return {username: corkg.current_user.username}
     except:
         abort(401, "Not logged in")
 
