@@ -1,0 +1,20 @@
+.navbar li {
+	padding: auto;
+	font: 14px/25px "helvetica neue",sans-serif;
+}
+
+.navbar {
+	height:12px;
+}
+
+.navbar .brand {
+	font: 15px/.9 "helvetica neue",helvetica,arial,sans-serif;
+}
+
+.navbar form {
+	line-height: 40px;
+
+}
+body {
+	padding: 70px 70px 0 40px;
+}

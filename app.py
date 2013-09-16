@@ -90,7 +90,7 @@ def do_login():
 
 @site.post('/logout')
 def logout():
-    if cork.current_user.logout():
+    if cork.logout():
         print "logged out"
         return {'ok':'loggedOut'}
     else:
