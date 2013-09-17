@@ -23,7 +23,7 @@ def populate_conf_directory():
         'desc': username + ' test user',
         'creation_date': tstamp
     }
-    username = password = ''
+    username = password = 'a'
     cork._store.users[username] = {
         'role': 'user',
         'hash': cork._hash(username, password),

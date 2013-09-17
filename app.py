@@ -26,46 +26,78 @@ session_opts = {
 app = SessionMiddleware(site, session_opts)
 cork = Cork('example_conf')
 
-def make_navbar():
-    navbar = [('Home','/'),('Enter a new case','/newcase'),
-                    ('Search for a new case','/searchcase'), ('Register','/register')]
-    return navbar
-
-####### Routes
-
-@site.route('/css/<filename>')
-def server_css(filename):
-    return static_file(filename, root='./css')
-
-@site.route('/js/<filename>')
-def server_js(filename):
-    return static_file(filename, root='./js')
+###### Static Routes
 
 @site.route('/static/<filepath:path>')
 def server_static(filepath):
     return static_file(filepath, root='./static')
 
-@site.route('/img/<filename>')
-def server_img(filename):
-	return static_file(filename, root="./img")
-
 @site.route('/cases/<case_id>/<filename>')
 def server_case_image(case_id,filename):
 	return static_file(filename, root="./cases/"+case_id)
 
-@site.route('/usr_img/<username>')
-def serve_usr_img(username):
-	session = request.environ.get('beaker.session')
-	if 'username' in session and session['username'] == username or session['username'] == 'ml':
-		filename = username + '.jpg'
-		if os.path.exists('./usr_img/'+filename):
-			return static_file(filename, root='./usr_img')
-		else:
-			return static_file('francis.jpg',root='./usr_img')
-
 @site.get('/')
 def index():
-  return static_file('index.html',root=".")
+    return static_file('index.html',root=".")
+
+###### JSON login routes
+
+### if logged in return {username : username, loggedIn: True}
+@site.get('/j/login')
+def jgetlogin():
+    try: 
+        user = cork.current_user
+        print "already logged in as "+ user.username
+        return {'id': '1','username': user.username,'password': '', 'loggedIn' : True}
+    except:
+        return {'username' : '','password': '','loggedIn' : False}
+
+@site.post('/j/login')
+def jpostlogin():
+    username = str(request.json.get("username"))
+    password = str(request.json.get("password"))
+    if cork.login(username,password):
+        print "logging in" + username+password
+        return {'id':'1','username': username, 'password':'', 'loggedIn':True}
+    else:
+        abort(401, "Access denied")
+
+@site.delete('/j/login/<id>')
+def jdellogin(id):
+    print 'about to delete'
+    session = cork._beaker_session       
+    session.delete()
+    return {'username':'','password':'','loggedIn':False}
+        
+        
+###### Search the database and return collection of cases         
+@site.post('/j/search/<searchterm')
+def jpostsearch(searchterm):
+    pass
+
+###### Case paths
+
+### create a new case
+@site.post('/j/case')
+def jpostcase():
+    pass
+
+### get case from database, or refresh
+@site.get('/j/case/<caseid>')
+def jgetcase(caseid):
+    pass
+
+### update existing case
+@site.put('/j/case/<caseid>')
+def jputcase(caseid):
+    pass
+
+### delete a case
+@site.delete('/j/casedelete/<caseid>')
+def jdeletecase(caseid):
+    pass
+
+
     
 @site.get('/oldsite')
 def oldindex():
@@ -100,7 +132,7 @@ def logout():
 @site.get('/bb/login')
 def show_login():
     try:
-        return {username: corkg.current_user.username}
+        return {username: cork.current_user.username}
     except:
         abort(401, "Not logged in")
 
