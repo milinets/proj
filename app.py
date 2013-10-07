@@ -38,7 +38,11 @@ def server_case_image(case_id,filename):
 
 @site.get('/')
 def index():
-    return static_file('index.html',root=".")
+  return static_file('index.html',root=".")
+  
+@site.get('/favicon.ico')
+def icon():
+  return static_file('box.png',root="./static/img")
 
 ###### JSON login routes
 
@@ -80,22 +84,23 @@ def jpostsearch(searchterm):
 ### create a new case
 @site.post('/j/case')
 def jpostcase():
-    pass
+  print "about to enter a new case"
+
 
 ### get case from database, or refresh
 @site.get('/j/case/<caseid>')
 def jgetcase(caseid):
-    pass
+  print "about to get a case"
 
 ### update existing case
 @site.put('/j/case/<caseid>')
 def jputcase(caseid):
-    pass
+  print "about to alter a case"
 
 ### delete a case
 @site.delete('/j/casedelete/<caseid>')
 def jdeletecase(caseid):
-    pass
+  print "about to delete a case"
 
 
     
