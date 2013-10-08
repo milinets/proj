@@ -86,7 +86,6 @@ def jpostsearch(searchterm):
 def jpostcase():
   print "about to enter a new case"
 
-
 ### get case from database, or refresh
 @site.get('/j/case/<caseid>')
 def jgetcase(caseid):
@@ -98,22 +97,12 @@ def jputcase(caseid):
   print "about to alter a case"
 
 ### delete a case
-@site.delete('/j/casedelete/<caseid>')
+@site.delete('/j/case/<caseid>')
 def jdeletecase(caseid):
   print "about to delete a case"
 
 
     
-@site.get('/oldsite')
-def oldindex():
-	session = request.environ.get('beaker.session')
-	return template('home', title="Home Page", session=session, message=[])
-	interval = session['_accessed_time'] - (session.last_accessed or 0)
-
-@site.get('/home')
-def home():
-	session = request.environ.get('beaker.session')
-	return template('home', title="Home Page",session=session, message=[])
 
 @site.post('/login')
 def do_login():

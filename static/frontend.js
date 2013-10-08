@@ -81,9 +81,9 @@ UserModel = Backbone.Model.extend({
     }
 });
 
-window.user = new UserModel({});
-window.login_view = new LoginView({ el: $('#login_container'),model:window.user});
-window.search_view = new SearchView({ el: $('#main_container') });
+window.user = window.user || new UserModel({});
+window.login_view = window.login_view || new LoginView({ el: $('#login_container'),model:window.user});
+window.search_view = window.search_view || new SearchView({ el: $('#main_container') });
 
 var AppRouter = Backbone.Router.extend({
         routes: {
@@ -93,6 +93,9 @@ var AppRouter = Backbone.Router.extend({
 
 // Initiate the router
 var app_router = new AppRouter;
+
+
 app_router.on("checklogin", function() {
+  alert('hello');
     window.user.is_logged_in(window.user);
 });
