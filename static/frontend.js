@@ -58,7 +58,6 @@ LoginView = Backbone.View.extend({
     }
 });
 
-
 UserModel = Backbone.Model.extend({
     defaults: {
         username: '',
@@ -78,6 +77,7 @@ UserModel = Backbone.Model.extend({
     }
 });
 
+
 window.user = new UserModel({});
 window.login_view = new LoginView({ el: $('#login_container'),model:window.user});
 window.search_view = new SearchView({ el: $('#searchbox') });
@@ -87,6 +87,7 @@ var AppRouter = Backbone.Router.extend({
             "home": "home",
             "about": "about",
             "entercase": "entercase",
+            "showcase": "showcase",
             "editcase/:id": "editcase",
             "registeruser": "registeruser",
             "updateuser/:id": "updateuser"
@@ -102,6 +103,10 @@ app_router.on("route:home", function() {
     
 app_router.on("route:about", function() {
     console.log('about');
+});
+
+app_router.on("route:showcase", function(id) {
+    console.log("show case "+id); 
 });
 
 app_router.on("route:entercase", function() {
