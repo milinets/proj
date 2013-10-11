@@ -35,6 +35,7 @@ CaseShowView = Backbone.View.extend({
         
         var template = _.template( texttemplate, this.model.attributes );
         this.$el.html( template );
+        return this;
     },
     events: {
         "click #login_button": "doLogin",
@@ -70,6 +71,7 @@ CaseEnterView = Backbone.View.extend({
         
         var template = _.template( texttemplate, this.model.attributes );
         this.$el.html( template );
+        return this;
     },
     events: {
         "click #login_button": "doLogin",
@@ -105,6 +107,7 @@ CaseEditView = Backbone.View.extend({
         
         var template = _.template( texttemplate, this.model.attributes );
         this.$el.html( template );
+        return this;
     },
     events: {
         "click #login_button": "doLogin",

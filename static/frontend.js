@@ -95,45 +95,42 @@ var AppRouter = Backbone.Router.extend({
     });
 
 // Initiate the router
-var app_router = new AppRouter;
+var app = new AppRouter;
 
-app_router.on("route:home", function() {
+app.on("route:home", function() {
     $("#main_container").html("<h2>This is the homepage</h2>");
 });
     
-app_router.on("route:about", function() {
+app.on("route:about", function() {
     $("#main_container").html("<h2>About this site</h2>");
 });
 
-app_router.on("route:showcase", function(id) {
-    $("#main_container").empty();
+app.on("route:showcase", function(id) {
     current_case = new CaseShowView({
-        el: $("#main_container"), 
         model: new CaseModel({"id": id})
     });
+    $("#main_container").html(current_case.el);    
 });
 
-app_router.on("route:entercase", function() {
-    $("#main_container").empty();
+app.on("route:entercase", function() {
     current_case = new CaseEnterView({
-        el: $("#main_container"), 
         model: new CaseModel()
-    });    
+    });
+    $("#main_container").html(current_case.el);
 });              
               
-app_router.on("route:editcase", function(id) {
-    $("#main_container").empty();
+app.on("route:editcase", function(id) {
     current_case = new CaseShowView({
-        el: $("#main_container"), 
         model: new CaseModel({"id": id})
     });
+    $("#main_container").html(current_case.el);    
 });
 
-app_router.on("route:registeruser", function() {
+app.on("route:registeruser", function() {
     console.log("register user");
 });
 
-app_router.on("route:updateuser", function(id) {
+app.on("route:updateuser", function(id) {
     console.log("update user #"+id);    
 });
 
