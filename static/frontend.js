@@ -98,23 +98,35 @@ var AppRouter = Backbone.Router.extend({
 var app_router = new AppRouter;
 
 app_router.on("route:home", function() {
-    console.log('home');
+    $("#main_container").html("<h2>This is the homepage</h2>");
 });
     
 app_router.on("route:about", function() {
-    console.log('about');
+    $("#main_container").html("<h2>About this site</h2>");
 });
 
 app_router.on("route:showcase", function(id) {
-    console.log("show case "+id); 
+    $("#main_container").empty();
+    current_case = new CaseShowView({
+        el: $("#main_container"), 
+        model: new CaseModel({"id": id})
+    });
 });
 
 app_router.on("route:entercase", function() {
-    console.log("enter case");
+    $("#main_container").empty();
+    current_case = new CaseEnterView({
+        el: $("#main_container"), 
+        model: new CaseModel()
+    });    
 });              
               
 app_router.on("route:editcase", function(id) {
-    console.log("edit case "+id); 
+    $("#main_container").empty();
+    current_case = new CaseShowView({
+        el: $("#main_container"), 
+        model: new CaseModel({"id": id})
+    });
 });
 
 app_router.on("route:registeruser", function() {
