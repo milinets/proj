@@ -26,7 +26,7 @@ LoginView = Backbone.View.extend({
     },
     render: function(){
         if (this.model.get('loggedIn')) {
-            texttemplate = '<form class="navbar-form navbar-right"><button type="submit" id="logout_button" class="btn btn-success"> \
+            var texttemplate = '<form class="navbar-form navbar-right"><button type="submit" id="logout_button" class="btn btn-success"> \
                                     Logout, <%= username %></button></form>';
         } else {
         var texttemplate='<form class="navbar-form navbar-right"> \
@@ -55,8 +55,6 @@ LoginView = Backbone.View.extend({
     },
     doLogout: function(event) {
         this.model.logout();
-        window.user = new UserModel({});
-        window.login_view = new LoginView({ el: $('#login_container'),model:window.user});
     }
 });
 
@@ -72,30 +70,54 @@ UserModel = Backbone.Model.extend({
         this.fetch();
     },
     login : function() {
-        console.log('trying to log in' + JSON.stringify(this.attributes));
-        this.save(this.attributes);
+        this.save();
     },
     logout : function() {
-        console.log("about to logout "+JSON.stringify(this.attributes));
-        this.destroy();
+        this.save();
+        this.unset('id');
     }
 });
 
-window.user = window.user || new UserModel({});
-window.login_view = window.login_view || new LoginView({ el: $('#login_container'),model:window.user});
-window.search_view = window.search_view || new SearchView({ el: $('#main_container') });
+window.user = new UserModel({});
+window.login_view = new LoginView({ el: $('#login_container'),model:window.user});
+window.search_view = new SearchView({ el: $('#searchbox') });
 
 var AppRouter = Backbone.Router.extend({
         routes: {
-            "login": "checklogin"
+            "home": "home",
+            "about": "about",
+            "entercase": "entercase",
+            "editcase/:id": "editcase",
+            "registeruser": "registeruser",
+            "updateuser/:id": "updateuser"
         }
     });
 
 // Initiate the router
 var app_router = new AppRouter;
 
-
-app_router.on("checklogin", function() {
-  alert('hello');
-    window.user.is_logged_in(window.user);
+app_router.on("route:home", function() {
+    console.log('home');
 });
+    
+app_router.on("route:about", function() {
+    console.log('about');
+});
+
+app_router.on("route:entercase", function() {
+    console.log("enter case");
+});              
+              
+app_router.on("route:editcase", function(id) {
+    console.log("edit case "+id); 
+});
+
+app_router.on("route:registeruser", function() {
+    console.log("register user");
+});
+
+app_router.on("route:updateuser", function(id) {
+    console.log("update user #"+id);    
+});
+
+Backbone.history.start();

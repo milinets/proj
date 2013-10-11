@@ -66,6 +66,12 @@ def jpostlogin():
     else:
         abort(401, "Access denied")
 
+@site.put('/j/login/<id>')
+def jputlogin(id):
+    session = cork._beaker_session
+    session.delete()
+    return {'username':'','password':'','loggedIn':False}
+        
 @site.delete('/j/login/<id>')
 def jdellogin(id):
     print 'about to delete'
