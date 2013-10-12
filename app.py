@@ -38,11 +38,11 @@ def server_case_image(case_id,filename):
 
 @site.get('/')
 def index():
-  return static_file('index.html',root=".")
+    return static_file('index.html',root=".")
   
 @site.get('/favicon.ico')
 def icon():
-  return static_file('box.png',root="./static/img")
+    return static_file('box.png',root="./static/img")
 
 ###### JSON login routes
 
@@ -52,23 +52,22 @@ def jgetlogin():
     try: 
         user = cork.current_user
         print "already logged in as "+ user.username
-        return {'id': '1','username': user.username,'password': '', 'loggedIn' : True}
+        return {'username': user.username,'password': '', 'loggedIn' : True}
     except:
         return {'username' : '','password': '','loggedIn' : False}
 
 @site.post('/j/login')
 def jpostlogin():
-    username = str(request.json.get("username"))
-    password = str(request.json.get("password"))
+    username = request.POST.get("username")
+    password = request.POST.get("password")
     if cork.login(username,password):
         print "logging in" + username+password
-        return {'id':'1','username': username, 'password':'', 'loggedIn':True}
+        return {'username': username, 'password':'', 'loggedIn':True}
     else:
         abort(401, "Access denied")
 
-# a PUT request to login logs out the user
-@site.put('/j/login/<id>')
-def jputlogin(id):
+@site.post('/j/logout')
+def jputlogin():
     session = cork._beaker_session
     session.delete()
     return {'username':'','password':'','loggedIn':False}
@@ -78,7 +77,11 @@ def jputlogin(id):
 ###### Search the database and return collection of cases         
 @site.post('/j/search/<searchterm')
 def jpostsearch(searchterm):
-    pass
+    try:
+        cork.require()
+        return "required"
+    except:
+        return "hello"
 
 ###### Case paths
 
@@ -105,31 +108,8 @@ def jdeletecase(caseid):
 
     
 
-@site.post('/login')
-def do_login():
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    if cork.login(username,password):
-        print "logging in" + username+password
-        return {'ok','loggedIn'}
-    else:
-        abort(401, "Access denied")
 
-@site.post('/logout')
-def logout():
-    if cork.logout():
-        print "logged out"
-        return {'ok':'loggedOut'}
-    else:
-        log("logout didn't work")
-        return {'error':"logout didn't work"}
 
-@site.get('/bb/login')
-def show_login():
-    try:
-        return {username: cork.current_user.username}
-    except:
-        abort(401, "Not logged in")
 
 @site.get('/register')
 def signup_form():

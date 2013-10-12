@@ -13,7 +13,6 @@ SearchView = Backbone.View.extend({
         "click input[type=submit]": "doSearch"
     },
     doSearch: function( event ){
-        console.log( "Search for " + $('#search_input').val() );
         $.post('/j/search', $('#searchForm').serialize(), function(data) {
             console.log(data);
         });
@@ -66,16 +65,25 @@ UserModel = Backbone.Model.extend({
         password: '',
         loggedIn: false        
     },
-    urlRoot : '/j/login',
-    initialize : function(){
-        this.fetch();
+    initialize: function() {
+        var that = this;
+        $.get('/j/login', function(data){
+            that.set(data);
+        });
     },
     login : function() {
-        this.save();
+        var that = this;
+        $.post('/j/login', that.attributes, function(data){
+            if (data) {
+                that.set(data);
+            }
+        });
     },
     logout : function() {
-        this.save();
-        this.unset('id');
+        var that = this;
+        $.post('/j/logout', function(data){
+            that.set(data);
+        });
     }
 });
 
