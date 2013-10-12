@@ -3,18 +3,20 @@ SearchView = Backbone.View.extend({
         this.render();
     },
     render: function(){
-        var texttemplate='<label>Search</label> \
+        var texttemplate='<form id="searchForm"><label>Search</label> \
             <input type="search" id="search_input"/> \
-            <input type="button" id="search_button" value="Search" />';
+            <input type="submit" id="search_button" value="Search" /></form>';
         var template = _.template( texttemplate, {});
         this.$el.html( template );
     },
     events: {
-        "click input[type=button]": "doSearch"
+        "click input[type=submit]": "doSearch"
     },
     doSearch: function( event ){
-        // Button clicked, you can access the element that was clicked with event.currentTarget
-        console.log( "Search for " + $("#search_input").val() );
+        console.log( "Search for " + $('#search_input').val() );
+        $.post('/j/search', $('#searchForm').serialize(), function(data) {
+            console.log(data);
+        });
     }
 });
 
@@ -91,10 +93,29 @@ var AppRouter = Backbone.Router.extend({
             "editcase/:id": "editcase",
             "registeruser": "registeruser",
             "updateuser/:id": "updateuser"
+        },
+        showView: function(selector, view) {
+          if (this.currentView)
+              this.currentView.close();
+          $(selector).html(view.render().el);
+          this.currentView = view;
+          return view;
         }
     });
 
+Backbone.View.prototype.close = function () {
+    if (this.beforeClose) {
+        this.beforeClose();
+    }
+    this.remove();
+    this.unbind();
+};
+
+
+
 // Initiate the router
+
+
 var app = new AppRouter;
 
 app.on("route:home", function() {
@@ -106,24 +127,21 @@ app.on("route:about", function() {
 });
 
 app.on("route:showcase", function(id) {
-    current_case = new CaseShowView({
-        model: new CaseModel({"id": id})
-    });
-    $("#main_container").html(current_case.el);    
+    this.showView($('#main_container'), new CaseEnterView({
+        model: new CaseModel()    
+    }));    
 });
 
 app.on("route:entercase", function() {
-    current_case = new CaseEnterView({
-        model: new CaseModel()
-    });
-    $("#main_container").html(current_case.el);
+    this.showView($('#main_container'), new CaseEnterView({
+        model: new CaseModel()    
+    }));
 });              
               
 app.on("route:editcase", function(id) {
-    current_case = new CaseShowView({
-        model: new CaseModel({"id": id})
-    });
-    $("#main_container").html(current_case.el);    
+    this.showView($('#main_container'), new CaseEditView({
+        model: new CaseModel({'id':id})    
+    }));
 });
 
 app.on("route:registeruser", function() {
