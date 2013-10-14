@@ -10,7 +10,6 @@ import hmac
 from string import letters
 import json
 from collections import namedtuple
-import forms
 import models
 from cork import Cork
 
@@ -88,22 +87,24 @@ def jpostsearch(searchterm):
 ### create a new case
 @site.post('/j/case')
 def jpostcase():
-  print "about to enter a new case"
+    print "about to enter a new case"
+    a = request.json
+    print a['acc']
 
 ### get case from database, or refresh
 @site.get('/j/case/<caseid>')
 def jgetcase(caseid):
-  print "about to get a case"
+      print "about to get a case"
 
 ### update existing case
 @site.put('/j/case/<caseid>')
 def jputcase(caseid):
-  print "about to alter a case"
+      print "about to alter a case"
 
 ### delete a case
 @site.delete('/j/case/<caseid>')
 def jdeletecase(caseid):
-  print "about to delete a case"
+      print "about to delete a case"
 
 
     

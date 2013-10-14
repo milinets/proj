@@ -92,13 +92,14 @@ window.user = new UserModel({});
 window.login_view = new LoginView({ el: $('#login_container'),model:window.user});
 window.search_view = new SearchView({ el: $('#searchbox') });
 
+
 var AppRouter = Backbone.Router.extend({
         routes: {
             "home": "home",
             "about": "about",
-            "entercase": "entercase",
-            "showcase": "showcase",
-            "editcase/:id": "editcase",
+            "casecreate": "casecreate",
+            "caseread/:id": "caseread",
+            "caseupdate/:id": "caseupdate",
             "registeruser": "registeruser",
             "updateuser/:id": "updateuser"
         },
@@ -128,26 +129,28 @@ var app = new AppRouter;
 
 app.on("route:home", function() {
     $("#main_container").html("<h2>This is the homepage</h2>");
+    humane.log('hello');
 });
     
 app.on("route:about", function() {
     $("#main_container").html("<h2>About this site</h2>");
+    humane.log('about');
 });
 
-app.on("route:showcase", function(id) {
-    this.showView($('#main_container'), new CaseEnterView({
-        model: new CaseModel()    
-    }));    
-});
-
-app.on("route:entercase", function() {
-    this.showView($('#main_container'), new CaseEnterView({
+app.on("route:casecreate", function() {
+    this.showView($('#main_container'), new CaseCreateView({
         model: new CaseModel()    
     }));
-});              
+});   
+
+app.on("route:caseread", function(id) {
+    this.showView($('#main_container'), new CaseReadView({
+        model: new CaseModel({'id': id})    
+    }));    
+});
               
-app.on("route:editcase", function(id) {
-    this.showView($('#main_container'), new CaseEditView({
+app.on("route:caseupdate", function(id) {
+    this.showView($('#main_container'), new CaseUpdateView({
         model: new CaseModel({'id':id})    
     }));
 });
