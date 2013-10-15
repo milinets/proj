@@ -15,38 +15,7 @@ CaseModel = Backbone.Model.extend({
         if (!(attrs.title)) {
             return "A title is required";
         };
-    },
-    case_create: function(){
-        console.log(this.attributes);
-        this.save(this.attributes, {
-            success: function(model,response,options){
-                app.navigate('caseread/'+model.get('id'), {trigger: true});
-            },
-            error: function(model,xhr,options){
-                console.log('Case creation failed. '+xhr);
-            }
-        });
-    },
-    case_read: function(id){
-        $.get('/j/caseread/'+id, function(data) {
-            this.set(data);
-        });
-    },
-    case_update: function(id){
-        $.ajax({
-            type: 'PUT',
-            url: '/j/caseupdate/'+id,
-            data: (this.toJSON())
-        })
-        .done(function(data){
-            console.log('updated: '+data);
-            return true;
-        })
-        .fail(function(jqXHR,text){
-            console.log('failed to update: '+text);
-        });
-    },
-    case_delete: function(){}
+    }
 });
 
 CaseCreateView = Backbone.View.extend({
@@ -101,7 +70,14 @@ CaseCreateView = Backbone.View.extend({
     },
     submit_case: function(event){
         event.preventDefault();
-        this.model.case_create();
+        this.model.save(null,{
+            success: function(model,response,options) {
+                app.navigate('caseread/'+model.get('id'), {trigger: true});                
+            },
+            error: function(model,xhr,options) {
+                console.log('Case not saved: '+(xhr.statusText) +' '+ (xhr.status));
+            }
+        });
     },
     reset_case: function(event) {
         this.model.clear();
@@ -110,7 +86,15 @@ CaseCreateView = Backbone.View.extend({
 
 CaseReadView = Backbone.View.extend({
     initialize: function(){
-        this.render();
+        var that = this;
+        this.model.fetch({
+            success: function() {
+                that.render();
+            },
+            error: function(model,response,options) {
+                console.log('Could not retrieve case '+ response.status);
+            }
+        });
         this.model.on("change",this.render,this);
     },
     render: function(){
@@ -165,7 +149,15 @@ CaseReadView = Backbone.View.extend({
 
 CaseUpdateView = Backbone.View.extend({
     initialize: function(){
-        this.render();
+        var that = this;
+        this.model.fetch({
+            success: function() {
+                that.render();
+            },
+            error: function(model,response,options) {
+                console.log('Could not retrieve case '+ response.status);
+            }
+        });
         this.model.on("change",this.render,this);
     },
     render: function(){
@@ -192,7 +184,6 @@ CaseUpdateView = Backbone.View.extend({
                               <button type="submit" id="submit_button" class="btn btn-success">Submit</button> \
                               <button type="reset" id="reset_button" class="btn btn-success">Reset</button> \
                           </form>';
-        
         var template = _.template( texttemplate, this.model.attributes );
         this.$el.html( template );
         return this;
@@ -216,9 +207,15 @@ CaseUpdateView = Backbone.View.extend({
         });
     },
     submit_case: function(event){
-        if (this.model.case_update()) {
-            app.navigate('caseread/'+(this.model.get('id')), {trigger: true});
-        };
+        event.preventDefault();
+        this.model.save(null,{
+            success: function(model,response,options) {
+                app.navigate('caseread/'+model.get('id'), {trigger: true});                
+            },
+            error: function(model,xhr,options) {
+                console.log('Case not saved: '+(xhr.statusText) +' '+ (xhr.status));
+            }
+        });
     },
     reset_case: function(event) {
         this.model.set({});

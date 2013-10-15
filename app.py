@@ -2,6 +2,7 @@
 from bottle import Bottle, route, run, abort, request, response, template, debug, static_file, redirect, ServerAdapter, server_names
 from beaker.middleware import SessionMiddleware
 import os
+import sys
 import shutil
 import re
 import random
@@ -10,7 +11,7 @@ import hmac
 from string import letters
 import json
 from collections import namedtuple
-import models
+import dbfuncs
 from cork import Cork
 
 site = Bottle()
@@ -74,39 +75,69 @@ def jputlogin():
         
         
 ###### Search the database and return collection of cases         
-@site.post('/j/search/<searchterm')
-def jpostsearch(searchterm):
+@site.post('/j/search')
+def jpostsearch():
     try:
-        cork.require()
-        return "required"
+        user = cork.current_user
+        searchterm = request.POST.get('searchterm')
+        return json.dumps(dbfuncs.case_search(searchterm))
     except:
-        return "hello"
+        print "search not completed"
 
 ###### Case paths
 
 ### create a new case
 @site.post('/j/case')
 def jpostcase():
-    print "about to enter a new case"
-    a = request.json
-    print a['acc']
+    try:
+        user = cork.current_user
+    except:
+        abort(401, 'You are not logged in.')
+    try:
+        return dbfuncs.case_create(request.json)
+    except:
+        print "error: ", sys.exc_info()[0]
+        abort(405, 'Could not add this case.')
 
 ### get case from database, or refresh
 @site.get('/j/case/<caseid>')
 def jgetcase(caseid):
-      print "about to get a case"
+    try:
+        user = cork.current_user
+    except:
+        abort(401, 'You are not logged in.')
+    try:
+        return dbfuncs.case_read(caseid)
+    except:
+        abort(401, 'Could not find this case.')
 
 ### update existing case
 @site.put('/j/case/<caseid>')
 def jputcase(caseid):
-      print "about to alter a case"
+    try:
+        user = cork.current_user
+    except:
+        abort(401, 'You are not logged in.')
+    try:
+        data = request.json
+        del data['id']
+        return dbfuncs.case_update(caseid,data)
+    except:
+        print "error: ", sys.exc_info()        
+        abort(401, 'Could not find this case.')
 
 ### delete a case
 @site.delete('/j/case/<caseid>')
 def jdeletecase(caseid):
-      print "about to delete a case"
-
-
+    try:
+        user = cork.current_user
+    except:
+        abort(401, 'You are not logged in.')
+    try:
+        return case_delete(caseid)
+    except:
+        abort(401, 'Could not find this case.')
+    
     
 
 
