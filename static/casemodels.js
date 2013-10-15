@@ -18,6 +18,10 @@ CaseModel = Backbone.Model.extend({
     }
 });
 
+CaseList = Backbone.Collection.extend({
+    model: CaseModel
+});
+
 CaseCreateView = Backbone.View.extend({
     initialize: function(){
         this.render();

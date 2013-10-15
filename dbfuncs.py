@@ -86,7 +86,10 @@ def case_search(searchstring):
     conn.close()
     mylist = []
     for pair in data:
-        newdict = {'id':pair[0]}
-        newdict.update(pair[1])
-        mylist.append(newdict)
+        id, mydict = pair
+        try: 
+            mydict['id'] = id.strip('-')
+            mylist.append(mydict)
+        except:
+            print mydict + " Doesn't work"
     return mylist

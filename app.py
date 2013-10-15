@@ -80,10 +80,22 @@ def jpostsearch():
     try:
         user = cork.current_user
         searchterm = request.POST.get('searchterm')
+        response.content_type = 'application/json'
         return json.dumps(dbfuncs.case_search(searchterm))
     except:
+        print "error: ", sys.exc_info()        
         print "search not completed"
 
+@site.post('/j/search/<searchterm>')
+def jpostsearchterm():
+    try:
+        user = cork.current_user
+        return dbfuncs.case_search(searchterm)
+    except:
+        print "error: ", sys.exc_info()
+        print "search not done"
+        
+        
 ###### Case paths
 
 ### create a new case
@@ -96,7 +108,7 @@ def jpostcase():
     try:
         return dbfuncs.case_create(request.json)
     except:
-        print "error: ", sys.exc_info()[0]
+        print "error: ", sys.exc_info()
         abort(405, 'Could not add this case.')
 
 ### get case from database, or refresh
@@ -109,6 +121,7 @@ def jgetcase(caseid):
     try:
         return dbfuncs.case_read(caseid)
     except:
+        print "error: ", sys.exc_info()        
         abort(401, 'Could not find this case.')
 
 ### update existing case
@@ -137,11 +150,6 @@ def jdeletecase(caseid):
         return case_delete(caseid)
     except:
         abort(401, 'Could not find this case.')
-    
-    
-
-
-
 
 @site.get('/register')
 def signup_form():
