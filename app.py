@@ -95,6 +95,14 @@ def jpostsearchterm():
         print "error: ", sys.exc_info()
         print "search not done"
         
+@site.get('/j/searchall')
+def jgetallcases():
+    try:
+        user = cork.current_user
+        response.content_type = 'application/json'
+        return json.dumps(dbfuncs.list_all_cases())
+    except:
+        "error: ", sys.exc_info()
         
 ###### Case paths
 

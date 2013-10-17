@@ -2,6 +2,7 @@ window.user = new UserModel({});
 window.login_view = new LoginView({ el: $('#login_container'),model:window.user});
 window.search_view = new SearchView({ el: $('#searchbox') });
 
+
 var AppRouter = Backbone.Router.extend({
         routes: {
             "home": "home",
@@ -9,6 +10,7 @@ var AppRouter = Backbone.Router.extend({
             "casecreate": "casecreate",
             "caseread/:id": "caseread",
             "caseupdate/:id": "caseupdate",
+            "listallcases": "listallcases",
             "registeruser": "registeruser",
             "updateuser/:id": "updateuser"
         },
@@ -32,7 +34,6 @@ Backbone.View.prototype.close = function () {
 
 
 // Initiate the router
-
 
 var app = new AppRouter;
 
@@ -62,6 +63,14 @@ app.on("route:caseupdate", function(id) {
     this.showView($('#main_container'), new CaseUpdateView({
         model: new CaseModel({'id':id})    
     }));
+});
+
+app.on("route:listallcases", function() {
+    var that=this;
+    $.get("/j/searchall", function(data){
+        app.casesList = new CaseList(data);
+        that.showView($('#main_container'), new CaseListView( {collection: app.casesList} ));
+    });
 });
 
 app.on("route:registeruser", function() {

@@ -10,7 +10,7 @@ LoginView = Backbone.View.extend({
         } else {
         var texttemplate='<form class="navbar-form navbar-right"> \
                             <div class="form-group"> \
-                              <input type="text" placeholder="Email" id="username_input" class="form-control"> \
+                              <input type="text" placeholder="Username" id="username_input" class="form-control"> \
                             </div> \
                             <div class="form-group"> \
                               <input type="password" placeholder="Password" id="password_input" class="form-control"> \

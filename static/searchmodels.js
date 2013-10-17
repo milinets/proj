@@ -3,16 +3,23 @@ SearchView = Backbone.View.extend({
         this.render();
     },
     render: function(){
-        var texttemplate='<form id="searchForm"><label>Search</label> \
-            <input type="search" name="searchterm" id="searchterm"/> \
-            <input type="submit" id="search_button" value="Search" /> \
-            <span id="notfound"></span></form> \
+        var texttemplate='<form class="form-horizontal" id="searchForm"> \
+            <div class="form-group"> \
+              <label for="searchterm" class="control-label sr-only">Search</label> \
+              <div class="col-md-offset-4 col-md-4"> \
+              <input type="search" class="form-control" name="searchterm" id="searchterm" placeholder="Enter Search Term Here"/> \
+              </div> \
+              <div class="col-md-4"> \
+              <button type="submit" class="btn btn-default" id="search_button">Search</button> \
+              </div> \
+            </div> \
+            </form> \
             ';
         var template = _.template( texttemplate, {});
         this.$el.html( template );
     },
     events: {
-        "click input[type=submit]": "doSearch"
+        "click button[type=submit]": "doSearch"
     },
     clear_input: function(){
         $('#searchterm').val('');

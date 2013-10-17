@@ -10,11 +10,17 @@ pg_conn_string = """host='ec2-54-221-236-207.compute-1.amazonaws.com'
                     user='gyjkvxbrcgbcrw' 
                     password = 'wviBCNb-y9lKv4SSHejQUD3h4X'
                  """
+
+pg_conn_string = """
+                    dbname='action' 
+                    user='action'
+                 """
 # dictionary cursor
 # cursor = dbconn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 def connect_db():
     return psycopg2.connect(pg_conn_string)
+
 
 def query_db(query, args=(), one=False):
     con = connect_db()
@@ -80,6 +86,24 @@ def case_search(searchstring):
     conn=connect_db()
     cur = conn.cursor()
     cur.execute("SELECT id, data from db WHERE data::text LIKE %s",('%'+searchstring+'%',))
+    data = cur.fetchall()
+    conn.commit()
+    cur.close()
+    conn.close()
+    mylist = []
+    for pair in data:
+        id, mydict = pair
+        try: 
+            mydict['id'] = id.strip('-')
+            mylist.append(mydict)
+        except:
+            print mydict + " Doesn't work"
+    return mylist
+
+def list_all_cases():
+    conn=connect_db()
+    cur = conn.cursor()
+    cur.execute("SELECT id, data from db")
     data = cur.fetchall()
     conn.commit()
     cur.close()
