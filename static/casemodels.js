@@ -121,7 +121,7 @@ CaseUpdateView = Backbone.View.extend({
         return this;
     },
     events: {
-        "change #case_entry": "refresh_case",
+        "change #case_edit": "refresh_case",
         "click #submit_button": "submit_case",
         "click #reset_button": "reset_case"
     },

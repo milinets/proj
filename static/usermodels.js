@@ -3,23 +3,14 @@ LoginView = Backbone.View.extend({
         this.render();
         this.model.on("change",this.render,this);
     },
+    login_template: _.template(window.appTemplates.login_template),
+    logout_template: _.template(window.appTemplates.logout_template),
     render: function(){
         if (this.model.get('loggedIn')) {
-            var texttemplate = '<form class="navbar-form navbar-right"><button type="submit" id="logout_button" class="btn btn-success"> \
-                                    Logout, <%= username %></button></form>';
+            this.$el.html( this.logout_template(this.model.attributes) );
         } else {
-        var texttemplate='<form class="navbar-form navbar-right"> \
-                            <div class="form-group"> \
-                              <input type="text" placeholder="Username" id="username_input" class="form-control"> \
-                            </div> \
-                            <div class="form-group"> \
-                              <input type="password" placeholder="Password" id="password_input" class="form-control"> \
-                            </div> \
-                            <button type="submit" id="login_button" class="btn btn-success">Sign in</button> \
-                          </form>';
+            this.$el.html( this.login_template(this.model.attributes) );
         }
-        var template = _.template( texttemplate, this.model.attributes );
-        this.$el.html( template );
     },
     events: {
         "click #login_button": "doLogin",

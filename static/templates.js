@@ -4,6 +4,26 @@ function hereDoc(f) {
 
 window.appTemplates = {};
 
+appTemplates.login_template = hereDoc(function(){/*
+<form class="navbar-form navbar-right">
+    <div class="form-group">
+        <input type="text" placeholder="Username" id="username_input" class="form-control">
+    </div>
+    <div class="form-group">
+        <input type="password" placeholder="Password" id="password_input" class="form-control">
+    </div>
+    <button type="submit" id="login_button" class="btn btn-success">Sign in</button>
+</form>
+*/});
+
+appTemplates.logout_template = hereDoc(function(){/*
+<form class="navbar-form navbar-right">
+    <button type="submit" id="logout_button" class="btn btn-success">
+        Logout, <%= username %>
+    </button>
+</form>
+*/});
+
 appTemplates.caseeditview = hereDoc(function(){/*
 <div class="panel panel-default">
   <div class="panel-heading">
