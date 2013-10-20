@@ -147,7 +147,8 @@ appTemplates.casereadview = hereDoc(function(){/*
           <p><%= quiz_title %></p>
       </div>
       <div class="col-sm-2">
-          <button type="submit" id="edit_button" class="btn btn-success">Edit this case</button>
+          <button id="edit_button" class="btn btn-success">Edit this case</button>
+          <button id="delete_button" class="btn btn-success">Delete this case</button>
       </div>          
       <div class="col-sm-2">
           <h6>Image upload area.</h3>

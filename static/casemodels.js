@@ -95,10 +95,24 @@ CaseReadView = Backbone.View.extend({
     },
     events: {
         "click #edit_button": "doEdit",
+        "click #delete_button": "doDelete"
     },
     doEdit: function(event){
         app.navigate('caseupdate/'+this.model.id, {trigger: true});
     },
+    doDelete: function(event){
+        $.ajax({
+            url: '/j/case/'+this.model.id,
+            type: 'DELETE',
+            success: function(data){
+                if (data.error) {
+                    humane.log(data.error)
+                } else {
+                    $('#main_container').html('<h3>Case deleted!</h3>');
+                }
+            }
+        });
+    }
 });
 
 

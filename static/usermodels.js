@@ -12,7 +12,6 @@ LoginView = Backbone.View.extend({
                   url: '/auth/login', // This is a URL on your website.
                   data: {assertion: assertion},
                   success: function(res, status, xhr) { 
-                      console.log(res);
                       that.model.set(res);
                   },
                   error: function(xhr, status, err) {
@@ -30,8 +29,10 @@ LoginView = Backbone.View.extend({
                   type: 'POST',
                   url: '/auth/logout', // This is a URL on your website.
                   success: function(res, status, xhr) { 
-                      console.log(res);
                       that.model.set(res);
+                      var request = new XMLHttpRequest();                   
+                      request.open("get", "/logout", false, "false", "false");
+                      request.send();
                   },
                   error: function(xhr, status, err) { 
                       console.log("Logout failure: " + err); 
@@ -53,21 +54,13 @@ LoginView = Backbone.View.extend({
         return this;
     },
     events: {
-        "click #login_button": function(){ navigator.id.request() },
-        "click #logout_button": function(){ navigator.id.logout() }
+        "click #login_button": function(e){ navigator.id.request(); return false },
+        "click #logout_button": function(e){ navigator.id.logout(); return false }
     }
 });
 
 UserModel = Backbone.Model.extend({
-    defaults: {
-        username: '',
-        password: '',
-        loggedIn: false        
-    },
     initialize: function() {
-    },
-    login : function() {
-    },
-    logout : function() {
+
     }
 });

@@ -14,7 +14,7 @@ import json
 from collections import namedtuple
 import dbfuncs
 from userclass import User
-from cork import Cork
+from caseclass import TFCase
 
 site = Bottle()
 session_opts = {
@@ -27,6 +27,7 @@ session_opts = {
 
 app = SessionMiddleware(site, session_opts)
 thisuser = User()
+tfcase = TFCase()
 
 ###### Static Routes
 
@@ -121,7 +122,7 @@ def jpostcase():
     if not thisuser.loggedIn:
         abort(401, 'You are not logged in.')
     try:
-        return dbfuncs.case_create(request.json)
+        return tfcase.case_create(request.json)
     except:
         print "error: ", sys.exc_info()
         abort(405, sys.exc_info())
@@ -132,7 +133,7 @@ def jgetcase(caseid):
     if not thisuser.loggedIn:
         abort(401,'You are not logged in.')
     try:
-        return dbfuncs.case_read(caseid)
+        return tfcase.case_read(caseid)
     except:
         print "error: ", sys.exc_info()        
         abort(401, 'Could not find this case.')
@@ -145,7 +146,7 @@ def jputcase(caseid):
     try:
         data = request.json
         del data['id']
-        return dbfuncs.case_update(caseid,data)
+        return tfcase.case_update(caseid,data)
     except:
         abort(401, sys.exc_info())
 
@@ -153,9 +154,9 @@ def jputcase(caseid):
 @site.delete('/j/case/<caseid>')
 def jdeletecase(caseid):
     if not thisuser.loggedIn:
-        abort(401, 'You are not logged in.')
+        return {'error': 'You are not logged in.'}
     try:
-        return case_delete(caseid)
+        return tfcase.case_delete(caseid)
     except:
         abort(401, 'Could not find this case.')
 

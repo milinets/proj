@@ -21,6 +21,7 @@ SearchView = Backbone.View.extend({
         var that = this;
         $.post('/j/search', {searchterm: $('#searchterm').val()}, function(data) {
             that.clear_input();
+            app.navigate('blank',true);
             if (data.error) {
                 humane.log(data.error);
                 return

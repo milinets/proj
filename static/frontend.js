@@ -1,7 +1,7 @@
-window.user = new UserModel({});
+window.user = new UserModel;
 window.login_view = new LoginView({ el: $('#login_container'),model:window.user});
 window.search_view = new SearchView({ el: $('#searchbox') });
-window.casesList = new CaseList({});
+window.casesList = new CaseList;
 
 var AppRouter = Backbone.Router.extend({
         routes: {
@@ -13,7 +13,8 @@ var AppRouter = Backbone.Router.extend({
             "listallcases": "listallcases",
             "searchresult": "searchresult",
             "registeruser": "registeruser",
-            "updateuser/:id": "updateuser"
+            "updateuser/:id": "updateuser",
+            "blank": "blank"
         },
         showView: function(selector, view) {
           if (this.currentView)
@@ -37,6 +38,8 @@ Backbone.View.prototype.close = function () {
 // Initiate the router
 
 var app = new AppRouter;
+
+app.on("route:blank", function(){});
 
 app.on("route:home", function() {
     $("#main_container").html("<h2>This is the homepage</h2>");
