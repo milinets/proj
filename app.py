@@ -1,6 +1,7 @@
 # bottle 0.10.11
 from bottle import Bottle, route, run, abort, request, response, template, debug, static_file, redirect, ServerAdapter, server_names
 from beaker.middleware import SessionMiddleware
+import requests
 import os
 import sys
 import shutil
@@ -12,6 +13,7 @@ from string import letters
 import json
 from collections import namedtuple
 import dbfuncs
+from userclass import User
 from cork import Cork
 
 site = Bottle()
@@ -24,7 +26,7 @@ session_opts = {
 }
 
 app = SessionMiddleware(site, session_opts)
-cork = Cork('example_conf')
+thisuser = User()
 
 ###### Static Routes
 
@@ -47,85 +49,88 @@ def icon():
 ###### JSON login routes
 
 ### if logged in return {username : username, loggedIn: True}
-@site.get('/j/login')
-def jgetlogin():
-    try: 
-        user = cork.current_user
-        print "already logged in as "+ user.username
-        return {'username': user.username,'password': '', 'loggedIn' : True}
-    except:
-        return {'username' : '','password': '','loggedIn' : False}
 
-@site.post('/j/login')
-def jpostlogin():
-    username = request.POST.get("username")
-    password = request.POST.get("password")
-    if cork.login(username,password):
-        print "logging in" + username+password
-        return {'username': username, 'password':'', 'loggedIn':True}
+@site.post('/auth/login')
+def login():
+    # The request has to have an assertion for us to verify
+    if 'assertion' not in request.forms:
+        abort(400)
+
+    # Send the assertion to Mozilla's verifier service.
+    data = {'assertion': request.forms.get('assertion'), 'audience': request.url}
+    resp = requests.post('https://verifier.login.persona.org/verify', data=data, verify=True)
+
+    # Did the verifier respond?
+    if resp.ok:
+        # Parse the response
+        verification_data = json.loads(resp.content)
+
+        # Check if the assertion was valid
+        if verification_data['status'] == 'okay':
+            thisuser.login(verification_data['email'])
+            print 'You are logged in'
+            return {'email': verification_data['email'], 'loggedIn': True}
+
+    # Oops, something failed. Abort.
+    abort(500)
+
+@site.post('/auth/logout')
+def logout():
+    session = request.environ.get('beaker.session')
+    if session:
+        session.delete()
+    return {'email': None, 'loggedIn': False}
+
+@site.post('/auth/check')
+def checklogin():
+    session = request.environ.get('beaker.session')
+    if 'email' in session:
+        return {'email': session.get('email'), 'loggedIn': True}
     else:
-        abort(401, "Access denied")
+        return {'email': '', 'loggedIn': False}
 
-@site.post('/j/logout')
-def jputlogin():
-    session = cork._beaker_session
-    session.delete()
-    return {'username':'','password':'','loggedIn':False}
-        
-        
-        
 ###### Search the database and return collection of cases         
 @site.post('/j/search')
 def jpostsearch():
-    try:
-        user = cork.current_user
-        searchterm = request.POST.get('searchterm')
-        response.content_type = 'application/json'
-        return json.dumps(dbfuncs.case_search(searchterm))
-    except:
-        print "error: ", sys.exc_info()        
-        print "search not completed"
-
-@site.post('/j/search/<searchterm>')
-def jpostsearchterm():
-    try:
-        user = cork.current_user
-        return dbfuncs.case_search(searchterm)
-    except:
-        print "error: ", sys.exc_info()
-        print "search not done"
+    if thisuser.loggedIn:
+        try:
+            searchterm = request.POST.get('searchterm')
+            response.content_type = 'application/json'
+            return json.dumps(dbfuncs.case_search(searchterm))
+        except:
+            print "error: ", sys.exc_info()        
+    else:
+        return {'error':'Please log in first.'}
         
 @site.get('/j/searchall')
 def jgetallcases():
-    try:
-        user = cork.current_user
-        response.content_type = 'application/json'
-        return json.dumps(dbfuncs.list_all_cases())
-    except:
-        "error: ", sys.exc_info()
-        
+    if thisuser.loggedIn:
+        try:
+            response.content_type = 'application/json'
+            return json.dumps(dbfuncs.list_all_cases())
+        except:
+            abort(405, sys.exc_info())
+    else:
+        return {'error':'Please log in first.'}
+              
 ###### Case paths
 
 ### create a new case
 @site.post('/j/case')
 def jpostcase():
-    try:
-        user = cork.current_user
-    except:
+    if not thisuser.loggedIn:
         abort(401, 'You are not logged in.')
     try:
         return dbfuncs.case_create(request.json)
     except:
         print "error: ", sys.exc_info()
-        abort(405, 'Could not add this case.')
+        abort(405, sys.exc_info())
 
 ### get case from database, or refresh
 @site.get('/j/case/<caseid>')
 def jgetcase(caseid):
-    try:
-        user = cork.current_user
-    except:
-        abort(401, 'You are not logged in.')
+    if not thisuser.loggedIn:
+        abort(401,'You are not logged in.')
     try:
         return dbfuncs.case_read(caseid)
     except:
@@ -135,24 +140,19 @@ def jgetcase(caseid):
 ### update existing case
 @site.put('/j/case/<caseid>')
 def jputcase(caseid):
-    try:
-        user = cork.current_user
-    except:
+    if not thisuser.loggedIn:
         abort(401, 'You are not logged in.')
     try:
         data = request.json
         del data['id']
         return dbfuncs.case_update(caseid,data)
     except:
-        print "error: ", sys.exc_info()        
-        abort(401, 'Could not find this case.')
+        abort(401, sys.exc_info())
 
 ### delete a case
 @site.delete('/j/case/<caseid>')
 def jdeletecase(caseid):
-    try:
-        user = cork.current_user
-    except:
+    if not thisuser.loggedIn:
         abort(401, 'You are not logged in.')
     try:
         return case_delete(caseid)

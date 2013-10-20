@@ -5,24 +5,38 @@ function hereDoc(f) {
 window.appTemplates = {};
 
 appTemplates.login_template = hereDoc(function(){/*
-<form class="navbar-form navbar-right">
-    <div class="form-group">
-        <input type="text" placeholder="Username" id="username_input" class="form-control">
-    </div>
-    <div class="form-group">
-        <input type="password" placeholder="Password" id="password_input" class="form-control">
-    </div>
-    <button type="submit" id="login_button" class="btn btn-success">Sign in</button>
-</form>
+    <li>
+        <a id="login_button" href="#"><span><img src="/static/img/email_sign_in_blue.png"/></span></a>
+    </li>
 */});
 
 appTemplates.logout_template = hereDoc(function(){/*
-<form class="navbar-form navbar-right">
-    <button type="submit" id="logout_button" class="btn btn-success">
-        Logout, <%= username %>
-    </button>
-</form>
+    <li>
+        <a id="logout_button" class="btn btn-default" href="#">Log out, <%= email %> </a>
+    </li>
 */});
+
+appTemplates.searchform = hereDoc(function(){/*
+    <form class="form-horizontal" id="searchForm">
+        <div class="form-group">
+            <label for="searchterm" class="control-label sr-only">Search</label>
+            <div class="col-md-offset-4 col-md-4">
+              <input type="search" class="form-control" name="searchterm" id="searchterm" placeholder="Enter Search Term Here"/>
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-default" id="search_button">Search</button>
+            </div>
+         </div>
+    </form>
+*/});
+        
+appTemplates.listrow = hereDoc(function(){/*
+        <a href="#caseread/<%= id %>" class="list-group-item" style="display:block;width:50%%;float:left">
+            <h4><%= title %></h4>
+            <p>MRN: <%= mrn %></p>
+            <p>ID: <%= id %></p>
+        </a>
+*/});        
 
 appTemplates.caseeditview = hereDoc(function(){/*
 <div class="panel panel-default">
@@ -36,7 +50,7 @@ appTemplates.caseeditview = hereDoc(function(){/*
       <div class="form-group">
         <div class="col-sm-4">
           <label for="title" class="control-label">Case Title</label>
-          <textarea class="form-control" id="title" rows="2" autofocus><%= title %></textarea>
+          <textarea class="form-control" id="title" rows="2"><%= title %></textarea>
         </div>
         <div class="col-sm-2">
           <label for="mrn" class="control-label">Medical Record #</label>

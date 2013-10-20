@@ -56,7 +56,7 @@ CaseCreateView = Backbone.View.extend({
                 app.navigate('caseread/'+model.get('id'), {trigger: true});                
             },
             error: function(model,xhr,options) {
-                console.log('Case not saved: '+(xhr.statusText) +' '+ (xhr.status));
+                humane.log('Status text: '+xhr.statusText+', Status code: '+xhr.status);
             }
         });
     },
@@ -73,8 +73,8 @@ CaseReadView = Backbone.View.extend({
             success: function() {
                 that.render();
             },
-            error: function(model,response,options) {
-                console.log('Could not retrieve case '+ response.status);
+            error: function(model,xhr,options) {
+                humane.log('Status text: '+xhr.statusText+', Status code: '+xhr.status);
             }
         });
         this.model.on("change",this.render,this);
@@ -110,8 +110,8 @@ CaseUpdateView = Backbone.View.extend({
             success: function() {
                 that.render();
             },
-            error: function(model,response,options) {
-                console.log('Could not retrieve case '+ response.status);
+            error: function(model,xhr,options) {
+                humane.log('Status text: '+xhr.statusText+', Status code: '+xhr.status);
             }
         });
         this.model.on("change",this.render,this);
@@ -145,7 +145,7 @@ CaseUpdateView = Backbone.View.extend({
                 app.navigate('caseread/'+model.get('id'), {trigger: true});                
             },
             error: function(model,xhr,options) {
-                console.log('Case not saved: '+(xhr.statusText) +' '+ (xhr.status));
+                humane.log('Status text: '+xhr.statusText+', Status code: '+xhr.status);
             }
         });
     },

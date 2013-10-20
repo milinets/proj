@@ -2,24 +2,12 @@ SearchView = Backbone.View.extend({
     initialize: function(){
         this.render();
     },
+    template: _.template(appTemplates.searchform),
     render: function(){
-        var texttemplate='<form class="form-horizontal" id="searchForm"> \
-            <div class="form-group"> \
-              <label for="searchterm" class="control-label sr-only">Search</label> \
-              <div class="col-md-offset-4 col-md-4"> \
-              <input type="search" class="form-control" name="searchterm" id="searchterm" placeholder="Enter Search Term Here"/> \
-              </div> \
-              <div class="col-md-4"> \
-              <button type="submit" class="btn btn-default" id="search_button">Search</button> \
-              </div> \
-            </div> \
-            </form> \
-            ';
-        var template = _.template( texttemplate, {});
-        this.$el.html( template );
+        this.$el.html(this.template());
     },
     events: {
-        "click button[type=submit]": "doSearch"
+        "click #search_button": "doSearch"
     },
     clear_input: function(){
         $('#searchterm').val('');
@@ -31,35 +19,30 @@ SearchView = Backbone.View.extend({
             return
         }
         var that = this;
-        $.post('/j/search', $('#searchForm').serialize(), function(data) {
+        $.post('/j/search', {searchterm: $('#searchterm').val()}, function(data) {
             that.clear_input();
-            if (data.length==0) {
-                $('#notfound').html('<h6>Search term was not found.</h6>');
-            } else {
-                $('#notfound').empty();
+            if (data.error) {
+                humane.log(data.error);
+                return
             }
-            app.casesList = new CaseList(data);
-            app.showView($('#main_container'), (new CaseListView({collection: app.casesList})));
+            if (data.length==0) {
+                $('#main_container').html("<h3>No cases found!</h3");
+            } else {
+                window.casesList.reset(data);
+                app.navigate('searchresult', {trigger: true});
+            }
         });
     }
 });
 
 CaseListView = Backbone.View.extend({
-    events: {
-        "click .caserow": "clickrow"
-    },
+    template: _.template(appTemplates.listrow),
     render: function(){
+        this.$el.html('<div class="list-group"></div>');
         var that = this;
         this.collection.each(function(record){
-            that.$el.append(that.rendercase(record));
+            that.$el.find('.list-group').append(that.template(record.attributes));
         });
         return this;
-    },
-    rendercase: function(record){
-        var texttemplate='<div class="caserow" id="<%= id %>">Title: <%= title %>, MRN: <%= mrn %>, ACC: <%= acc %></div>';
-        return _.template(texttemplate, record.attributes);
-    },
-    clickrow: function(event){
-        app.navigate('caseread/'+event.target.id, {trigger: true});
     }
 });
