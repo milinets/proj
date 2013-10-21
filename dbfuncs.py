@@ -15,6 +15,13 @@ pg_conn_string = """
                     dbname='action' 
                     user='action'
                  """
+
+pg_conn_string = """
+                    dbname='me' 
+                    user='me'
+"""
+
+
 # dictionary cursor
 # cursor = dbconn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 

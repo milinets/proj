@@ -59,7 +59,7 @@ def login():
 
     # Send the assertion to Mozilla's verifier service.
     data = {'assertion': request.forms.get('assertion'), 'audience': request.url}
-    resp = requests.post('https://verifier.login.persona.org/verify', data=data, verify=True)
+    resp = requests.post('https://verifier.login.persona.org/verify', data=data, verify=False)
 
     # Did the verifier respond?
     if resp.ok:

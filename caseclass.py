@@ -9,6 +9,12 @@ pg_conn_string = """
                     user='action'
 """
 
+pg_conn_string = """
+                    dbname='me' 
+                    user='me'
+"""
+
+
 def connect_db():
     return psycopg2.connect(pg_conn_string)
 
