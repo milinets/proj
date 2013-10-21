@@ -3,11 +3,7 @@ import psycopg2
 import psycopg2.extras
 import uuid
 import json
-
-
-
-def connect_db():
-    return psycopg2.connect(pg_conn_string)
+from dbfuncs import connect_db, pg_conn_string
 
 class User(object):
     def getbyemail(self,email):

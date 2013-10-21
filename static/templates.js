@@ -98,63 +98,38 @@ appTemplates.caseeditview = hereDoc(function(){/*
 */});
 
 appTemplates.casereadview = hereDoc(function(){/*
+<div class="col-sm-4">
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">
-      Case Edit Form
+      <%= title %>
     </h3>
   </div>
   <div class="panel-body">
-  <div class="row">
-      <div class="col-sm-4">
-          <h3>Title</h3>
-          <h4><%= title %></h4>
-      </div>
-      <div class="col-sm-2">
-          <h3>MRN</h3>
-          <h4><%= mrn %></h4>
-      </div>
-      <div class="col-sm-2">
-          <h3>ACC</h3>
-          <h4><%= acc %></h4>
-      </div>
-      <div class="col-sm-4">
-          <h3>Last Name</h3>
-          <h4><%= lname %></h4>
-      </div>
-  </div>
-  <div class="row">
-      <div class="col-sm-4">
-          <h3>History</h3>
+          <h5>MRN</h5>
+          <p><%= mrn %></p>
+          <h5>ACC</h5>
+          <p><%= acc %></p>
+          <h5>Last Name</h5>
+          <p><%= lname %></p>
+          <h5>History</h5>
           <p><%= history %></p>
-      </div>
-      <div class="col-sm-4">
-          <h3>Findings</h3>
+          <h5>Findings</h5>
           <p><%= findings %></p>
-      </div>
-      <div class="col-sm-4">
-          <h3>Discussion</h3>
+          <h5>Discussion</h5>
           <p><%= discussion %></p>
-      </div>
-  </div>
-  <div class="row">
-      <div class="col-sm-4">
-          <h3>Needs Follow-up</h3>
+          <h5>Needs Follow-up</h5>
           <p><%= needs_follow_up %></p>
-      </div>
-      <div class="col-sm-4">
-          <h3>Quiz Title</h3>
+          <h5>Quiz Title</h5>
           <p><%= quiz_title %></p>
-      </div>
-      <div class="col-sm-2">
           <button id="edit_button" class="btn btn-success">Edit this case</button>
           <button id="delete_button" class="btn btn-success">Delete this case</button>
-      </div>          
-      <div class="col-sm-2">
-          <h6>Image upload area.</h3>
-          <input id="fileupload" type="file" name="files" data-url="/j/upload_file_to/<%= id %>" multiple>
-      </div>
   </div>
+</div>
+</div>
+<div class="panel panel-default col-sm-8">
+       <h6>Image upload area.</h3>
+       <input id="fileupload" type="file" name="files" data-url="/j/upload_file_to/<%= id %>" multiple>
 </div>
 */});
 

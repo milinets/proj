@@ -3,14 +3,10 @@ import psycopg2
 import psycopg2.extras
 import uuid
 import json
-
-
-
-def connect_db():
-    return psycopg2.connect(pg_conn_string)
+from dbfuncs import connect_db, pg_conn_string
 
 class TFCase(object):
-    def case_create(self, data):
+    def create(self, data):
         case_id = str(uuid.uuid4().hex)
         datastring = json.dumps(data)
         conn = connect_db()
@@ -22,7 +18,7 @@ class TFCase(object):
         data['id'] = case_id
         return data
     
-    def case_read(self, case_id):
+    def read(self, case_id):
         conn = connect_db()
         cur = conn.cursor()
         cur.execute("SELECT data from db WHERE id = %s",(case_id,))
@@ -33,7 +29,7 @@ class TFCase(object):
         data['id'] = case_id
         return data
         
-    def case_update(self, case_id, data):
+    def update(self, case_id, data):
         conn=connect_db()
         cur = conn.cursor()
         datastring = json.dumps(data)
@@ -44,7 +40,7 @@ class TFCase(object):
         data['id'] = case_id
         return data
     
-    def case_delete(self, case_id):
+    def delete(self, case_id):
         conn=connect_db()
         cur = conn.cursor()
         cur.execute("SELECT data from db WHERE id = %s",(case_id,))
@@ -57,10 +53,10 @@ class TFCase(object):
         cur.close()
         conn.close()
     
-    def case_search(self, searchstring):
+    def search(self, searchstring):
         conn=connect_db()
         cur = conn.cursor()
-        cur.execute("SELECT id, data from db WHERE data->deleted <> TRUE AND data::text LIKE %s",('%'+searchstring+'%',))
+        cur.execute("SELECT id, data from db WHERE data::text LIKE %s",('%'+searchstring+'%',))
         data = cur.fetchall()
         conn.commit()
         cur.close()
@@ -68,9 +64,10 @@ class TFCase(object):
         mylist = []
         for pair in data:
             id, mydict = pair
-            try: 
-                mydict['id'] = id.strip('-')
-                mylist.append(mydict)
+            try:
+                mydict['id'] = id
+                if not mydict.get('deleted'):
+                    mylist.append(mydict)
             except:
                 print mydict + " Doesn't work"
         return mylist
@@ -87,7 +84,7 @@ class TFCase(object):
         for pair in data:
             id, mydict = pair
             try: 
-                mydict['id'] = id.strip('-')
+                mydict['id'] = id
                 if not mydict.get('deleted'):
                     mylist.append(mydict)
             except:

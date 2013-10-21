@@ -12,15 +12,14 @@ pg_conn_string = """host='ec2-54-221-236-207.compute-1.amazonaws.com'
                  """
 
 pg_conn_string = """
-                    dbname='action' 
-                    user='action'
-                 """
-
-pg_conn_string = """
                     dbname='me' 
                     user='me'
 """
 
+pg_conn_string = """
+                    dbname='action' 
+                    user='action'
+                 """
 
 # dictionary cursor
 # cursor = dbconn.cursor(cursor_factory=psycopg2.extras.DictCursor)

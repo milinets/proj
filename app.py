@@ -29,18 +29,6 @@ app = SessionMiddleware(site, session_opts)
 thisuser = User()
 tfcase = TFCase()
 
-pg_conn_string = """
-                    dbname='action' 
-                    user='action'
-"""
-
-
-#pg_conn_string = """
-#                    dbname='me' 
-#                    user='me'
-#"""
-
-
 ###### Static Routes
 
 @site.route('/static/<filepath:path>')
@@ -109,7 +97,7 @@ def jpostsearch():
         try:
             searchterm = request.POST.get('searchterm')
             response.content_type = 'application/json'
-            return json.dumps(dbfuncs.case_search(searchterm))
+            return json.dumps(tfcase.search(searchterm))
         except:
             print "error: ", sys.exc_info()        
     else:
@@ -120,9 +108,9 @@ def jgetallcases():
     if thisuser.loggedIn:
         try:
             response.content_type = 'application/json'
-            return json.dumps(dbfuncs.list_all_cases())
+            return json.dumps(tfcase.list_all_cases())
         except:
-            abort(405, sys.exc_info())
+            print "error: ", sys.exc_info()
     else:
         return {'error':'Please log in first.'}
               
@@ -134,7 +122,7 @@ def jpostcase():
     if not thisuser.loggedIn:
         abort(401, 'You are not logged in.')
     try:
-        return tfcase.case_create(request.json)
+        return tfcase.create(request.json)
     except:
         print "error: ", sys.exc_info()
         abort(405, sys.exc_info())
@@ -145,7 +133,7 @@ def jgetcase(caseid):
     if not thisuser.loggedIn:
         abort(401,'You are not logged in.')
     try:
-        return tfcase.case_read(caseid)
+        return tfcase.read(caseid)
     except:
         print "error: ", sys.exc_info()        
         abort(401, 'Could not find this case.')
@@ -158,7 +146,7 @@ def jputcase(caseid):
     try:
         data = request.json
         del data['id']
-        return tfcase.case_update(caseid,data)
+        return tfcase.update(caseid,data)
     except:
         abort(401, sys.exc_info())
 
@@ -168,9 +156,31 @@ def jdeletecase(caseid):
     if not thisuser.loggedIn:
         return {'error': 'You are not logged in.'}
     try:
-        return tfcase.case_delete(caseid)
+        return tfcase.delete(caseid)
     except:
         abort(401, 'Could not find this case.')
+        
+@site.post('/j/upload_file_to/<caseid>')
+def do_upload(caseid):
+    if not thisuser.loggedIn:
+        return {'error': 'You are not logged in.'}
+	resp_array = []
+	for i in request.files.getlist('files'):
+        # create a type: image entry in db and extract its id
+        # filename = id + '.' + i.filename.split('.')[-1]
+        # filepath = os.path.join('./static/caseimages',filename)
+		fileobj = i.file
+		with open(filepath,"wb") as target_file:
+			while True:
+				datachunk = fileobj.read(1024)
+				if not datachunk:
+					break
+				target_file.write(datachunk)
+		resp_array.append({'name':filename,'url': './static/caseimages/'+ filename, \
+			"delete_url":'/delete_image/'+case_id+'/'+filename, "delete_type":"DELETE"})
+	return json.dumps(resp_array)        
+
+        
 
 @site.get('/register')
 def signup_form():
@@ -218,6 +228,26 @@ def update_user(username):
 	thisUser.update(form)
 	return template('show-user', message="User %s updated" % thisUser.username)
 
+def do_upload(case_id):
+	session = request.environ['beaker.session']
+	if 'username' not in session:
+		return template(home, message=["Please log in to update case"], session=session)
+	resp_array = []
+	for i in request.files.getlist('files'):
+		if not os.path.exists(os.path.join('./cases',case_id)):
+			os.makedirs(os.path.join('./cases',case_id))
+		filename = models.get_id() + '.' + i.filename.split('.')[-1]
+		filepath = os.path.join('./cases',case_id,filename)
+		fileobj = i.file
+		with open(filepath,"wb") as target_file:
+			while True:
+				datachunk = fileobj.read(1024)
+				if not datachunk:
+					break
+				target_file.write(datachunk)
+		resp_array.append({'name':filename,'url': '/cases/'+ case_id + '/' + filename, \
+			"delete_url":'/delete_image/'+case_id+'/'+filename, "delete_type":"DELETE"})
+	return json.dumps(resp_array)
 
 
 @site.get('/newcase')
