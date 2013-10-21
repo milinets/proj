@@ -29,6 +29,18 @@ app = SessionMiddleware(site, session_opts)
 thisuser = User()
 tfcase = TFCase()
 
+pg_conn_string = """
+                    dbname='action' 
+                    user='action'
+"""
+
+
+#pg_conn_string = """
+#                    dbname='me' 
+#                    user='me'
+#"""
+
+
 ###### Static Routes
 
 @site.route('/static/<filepath:path>')

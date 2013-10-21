@@ -4,15 +4,6 @@ import psycopg2.extras
 import uuid
 import json
 
-pg_conn_string = """
-                    dbname='action' 
-                    user='action'
-"""
-
-pg_conn_string = """
-                    dbname='me' 
-                    user='me'
-"""
 
 
 def connect_db():
