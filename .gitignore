@@ -16,6 +16,8 @@ sdist
 develop-eggs
 .installed.cfg
 venv
+data
+
 # lib
 lib64
 
