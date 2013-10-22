@@ -4,23 +4,26 @@ import psycopg2
 import psycopg2.extras
 import uuid
 import json
+import os
 
-pg_conn_string = """host='ec2-54-221-236-207.compute-1.amazonaws.com'
-                    dbname='dc2ogsq6j70hc' 
-                    user='gyjkvxbrcgbcrw' 
-                    password = 'wviBCNb-y9lKv4SSHejQUD3h4X'
-                 """
-
-pg_conn_string = """
-                    dbname='me' 
-                    user='me'
-"""
-
-pg_conn_string = """
+thishost = os.uname()
+if 'Darwin' in thishost:
+    pg_conn_string = """
+        dbname='me' 
+        user='me'
+    """
+elif 'proj-38857' in thishost:
+    pg_conn_string = """
                     dbname='action' 
                     user='action'
-                 """
+             """
+else:
+    pg_conn_string = """
+                    dbname='postgres' 
+                    user='postgres'
+    """
 
+    
 # dictionary cursor
 # cursor = dbconn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 

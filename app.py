@@ -437,11 +437,18 @@ server_names['sslcherrypy'] = SSLCherryPy
 
 debug(True)
 if __name__ == '__main__':
-	# wwh
+    thishost = os.uname()
+    print thishost
+    if 'Darwin' in thishost or 'proj-38857' in thishost:
+        host = '0.0.0.0'
+    else:
+        host = '10.6.112.211'
+
+    # wwh
 	# run(app=app, host='localhost', port=443, reloader=True, server='sslcherrypy')
 	
 	# localhost
 	# run(app=app, host='0.0.0.0', port=3000, reloader=True, server='sslcherrypy')
 
     # localhost without ssl
-    run(app=app, host='0.0.0.0', port=3000, reloader=True)
+    run(app=app, host=host, port=3000, reloader=True)
