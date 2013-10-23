@@ -3,9 +3,12 @@ from bottle import Bottle, route, run, abort, request, response, template, debug
 from beaker.middleware import SessionMiddleware
 import requests
 import os
+import socket
 import sys
 import shutil
 import re
+import uuid
+import datetime
 import random
 import hashlib
 import hmac
@@ -15,6 +18,7 @@ from collections import namedtuple
 import dbfuncs
 from userclass import TFuser
 from caseclass import TFcase
+from imageclass import TFimage, TFimagestack
 
 site = Bottle()
 session_opts = {
@@ -70,6 +74,8 @@ def login():
         if verification_data['status'] == 'okay':
             thisuser.login(verification_data['email'])
             print 'You are logged in'
+            session =  request.environ.get('beaker.session')
+            session['email'] = verification_data['email']
             return {'email': verification_data['email'], 'loggedIn': True}
 
     # Oops, something failed. Abort.
@@ -160,26 +166,46 @@ def jdeletecase(caseid):
     except:
         abort(401, 'Could not find this case.')
         
-@site.post('/j/upload_file_to/<caseid>')
-def do_upload(caseid):
+@site.post('/j/upload_image_to/<caseid>')
+def do_image_upload(caseid):
     if not thisuser.loggedIn:
         return {'error': 'You are not logged in.'}
-	resp_array = []
-	for i in request.files.getlist('files'):
-        # create a type: image entry in db and extract its id
-        # filename = id + '.' + i.filename.split('.')[-1]
-        # filepath = os.path.join('./static/caseimages',filename)
-		fileobj = i.file
-		with open(filepath,"wb") as target_file:
-			while True:
-				datachunk = fileobj.read(1024)
-				if not datachunk:
-					break
-				target_file.write(datachunk)
-		resp_array.append({'name':filename,'url': './static/caseimages/'+ filename, \
-			"delete_url":'/delete_image/'+case_id+'/'+filename, "delete_type":"DELETE"})
-	return json.dumps(resp_array)        
+    resp_array = []
+    for i in request.files.getlist('files'):
+        thisimage = TFimage()
+        thisimage.data['id'] = str(uuid.uuid4())
+        thisimage.data['type'] = 'tfimage'
+        thisimage.data['tfcase'] = caseid
+        thisimage.data['date-created'] = datetime.datetime.now().isoformat()
+        filename = thisimage.data['filename'] = thisimage.data['id'] + '.' + i.filename.split('.')[-1]
+        filepath = os.path.join('./static/caseimages',filename)
+        fileobj = i.file
+        with open(filepath,"wb") as target_file:
+            while True:
+                datachunk = fileobj.read(1024)
+                if not datachunk:
+                    break
+                target_file.write(datachunk)
+        thisimage.create()
+        resp_array.append(thisimage.data)
+    return {'files': resp_array}
 
+@site.get('/j/images/<caseid>')
+def jgetimage(caseid):
+    if not thisuser.loggedIn:
+        return {'error': 'You are not logged in.'}
+    try:
+        response.content_type = 'application/json'
+        thisimage = TFimage()        
+        return json.dumps(thisimage.searchimagesbytfcase(caseid))
+    except:
+        print "error: ", sys.exc_info()        
+        return {'error': repr(sys.exc_info())}
+
+
+@site.post('/j/upload_image_stack_to/<caseid>')
+def do_image_stack_upload(caseid):
+    pass
         
 
 @site.get('/register')
@@ -439,10 +465,12 @@ debug(True)
 if __name__ == '__main__':
     thishost = os.uname()
     print thishost
+    thisip = socket.gethostbyname(socket.gethostname())
+    print thisip
     if 'Darwin' in thishost or 'proj-38857' in thishost:
-        host = '0.0.0.0'
+        hostip = '0.0.0.0'
     else:
-        host = '10.6.112.211'
+        hostip = '10.6.112.211'
 
     # wwh
 	# run(app=app, host='localhost', port=443, reloader=True, server='sslcherrypy')
@@ -451,4 +479,4 @@ if __name__ == '__main__':
 	# run(app=app, host='0.0.0.0', port=3000, reloader=True, server='sslcherrypy')
 
     # localhost without ssl
-    run(app=app, host=host, port=3000, reloader=True)
+    run(app=app, host=hostip, port=3000, reloader=True)

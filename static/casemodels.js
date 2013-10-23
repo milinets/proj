@@ -8,7 +8,8 @@ CaseModel = Backbone.Model.extend({
         history: '',
         discussion: '',
         needs_follow_up: '',
-        quiz_title: ''
+        quiz_title: '',
+        images: []
     },
     urlRoot: '/j/case',
     validate: function(attrs,options){
@@ -81,12 +82,23 @@ CaseReadView = Backbone.View.extend({
     },
     render: function(){
         this.$el.html( this.template(this.model.attributes) );
+        $.ajax({
+            type : 'GET',
+            url : '/j/images/'+this.model.id,
+            dataType : 'json',
+            success : function(data){
+                        $('#imagelist').empty;
+                        _.each(data, function(file){
+                               $('#imagelist').append(_.template(appTemplates.listimage,file));
+                            });
+            }
+        });            
         $(function () {
             $('#fileupload').fileupload({
                 dataType: 'json',
                 done: function (e, data) {
-                    $.each(data.result, function (index, file) {
-                        $('<p/>').text(file.name).appendTo(document.body);
+                    _.each(data.result.files, function(file) {
+                        $('#imagelist').append(_.template(appTemplates.listimage,file));
                     });
                 }
             });

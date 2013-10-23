@@ -38,6 +38,13 @@ appTemplates.listrow = hereDoc(function(){/*
         </a>
 */});        
 
+appTemplates.listimage = hereDoc(function(){/*
+        <a href="/static/caseimages/<%= filename %>" class="list-group-item" style="display:block;width:25%;float:left">
+            <img src="/static/caseimages/<%= filename %>" />
+            <p>ID: <%= id %></p>
+        </a>
+*/});        
+
 appTemplates.caseeditview = hereDoc(function(){/*
 <div class="panel panel-default">
   <div class="panel-heading">
@@ -128,8 +135,12 @@ appTemplates.casereadview = hereDoc(function(){/*
 </div>
 </div>
 <div class="panel panel-default col-sm-8">
-       <h6>Image upload area.</h3>
-       <input id="fileupload" type="file" name="files" data-url="/j/upload_file_to/<%= id %>" multiple>
+       <h5>Image upload area.</h5>
+       <input id="fileupload" type="file" name="files" data-url="/j/upload_image_to/<%= id %>" multiple>
+       <hr>
+</div>
+<div id="imagelist" class="list-group">
+    <h5>Image List area</h5>
 </div>
 */});
 
