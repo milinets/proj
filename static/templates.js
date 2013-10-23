@@ -39,8 +39,8 @@ appTemplates.listrow = hereDoc(function(){/*
 */});        
 
 appTemplates.listimage = hereDoc(function(){/*
-        <a href="/static/caseimages/<%= filename %>" class="list-group-item" style="display:block;width:25%;float:left">
-            <img src="/static/caseimages/<%= filename %>" />
+        <a href="/static/caseimages/<%= filename %>" class="list-group-item" style="display:block;width:120px;float:left">
+            <img src="/static/caseimages/<%= filename %>" width="100px" />
             <p>ID: <%= id %></p>
         </a>
 */});        
@@ -136,8 +136,16 @@ appTemplates.casereadview = hereDoc(function(){/*
 </div>
 <div class="panel panel-default col-sm-8">
        <h5>Image upload area.</h5>
-       <input id="fileupload" type="file" name="files" data-url="/j/upload_image_to/<%= id %>" multiple>
-       <hr>
+       <div class="container">
+       <div class="row">
+           <div id="image-dropzone" class="col-md-6">
+               <img src="someimage.png" height="150px" />
+           </div>
+           <div id="image-stack-dropzone" class="col-md-6">
+               <img src="someotherimage.png" height="150px" />
+           </div>
+       </div> 
+       </div>
 </div>
 <div id="imagelist" class="list-group">
     <h5>Image List area</h5>

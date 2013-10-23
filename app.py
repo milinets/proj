@@ -171,7 +171,7 @@ def do_image_upload(caseid):
     if not thisuser.loggedIn:
         return {'error': 'You are not logged in.'}
     resp_array = []
-    for i in request.files.getlist('files'):
+    for i in request.files.getlist('file'):
         thisimage = TFimage()
         thisimage.data['id'] = str(uuid.uuid4())
         thisimage.data['type'] = 'tfimage'
@@ -188,7 +188,7 @@ def do_image_upload(caseid):
                 target_file.write(datachunk)
         thisimage.create()
         resp_array.append(thisimage.data)
-    return {'files': resp_array}
+    return "ok"
 
 @site.get('/j/images/<caseid>')
 def jgetimage(caseid):

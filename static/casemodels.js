@@ -92,17 +92,39 @@ CaseReadView = Backbone.View.extend({
                                $('#imagelist').append(_.template(appTemplates.listimage,file));
                             });
             }
-        });            
-        $(function () {
-            $('#fileupload').fileupload({
-                dataType: 'json',
-                done: function (e, data) {
-                    _.each(data.result.files, function(file) {
-                        $('#imagelist').append(_.template(appTemplates.listimage,file));
-                    });
-                }
-            });
+        });  
+        $("#image-dropzone").dropzone({
+            init: function(){
+                var dropz= this;
+                this.on("addedfile", function(file) {
+                    console.log(file);
+                });
+                this.on("complete", function(file) {
+                    dropz.removeFile(file);
+                });
+            },
+            url: "/j/upload_image_to/"+this.model.id,
+            clickable: true,
+            acceptedFiles: 'image/*',
+            autoProcessQueue: true
         });
+
+        $("#image-stack-dropzone").dropzone({
+            init: function(){
+                var dropz= this;
+                this.on("addedfile", function(file) {
+                    console.log(file);
+                });
+                this.on("complete", function(file) {
+                    dropz.removeFile(file);
+                });
+            },
+            url: "/j/upload_image_stack_to/"+this.model.id,
+            clickable: true,
+            acceptedFiles: 'image/*',
+            autoProcessQueue: true
+        });
+
         return this;
     },
     events: {
