@@ -5,7 +5,11 @@ import uuid
 import json
 from dbfuncs import connect_db, pg_conn_string
 
-class User(object):
+#
+# TFuser: type: 'user', email: , id: , name: , role: , picture: , cases-created: [], cases-viewed: []
+#
+
+class TFuser(object):
     def getbyemail(self,email):
         conn=connect_db()
         cur = conn.cursor()

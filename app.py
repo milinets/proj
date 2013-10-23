@@ -13,8 +13,8 @@ from string import letters
 import json
 from collections import namedtuple
 import dbfuncs
-from userclass import User
-from caseclass import TFCase
+from userclass import TFuser
+from caseclass import TFcase
 
 site = Bottle()
 session_opts = {
@@ -26,8 +26,8 @@ session_opts = {
 }
 
 app = SessionMiddleware(site, session_opts)
-thisuser = User()
-tfcase = TFCase()
+thisuser = TFuser()
+tfcase = TFcase()
 
 ###### Static Routes
 

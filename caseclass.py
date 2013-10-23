@@ -5,9 +5,16 @@ import uuid
 import json
 from dbfuncs import connect_db, pg_conn_string
 
-class TFCase(object):
+# 
+# TFcase: visible: (yes, no, owner), type: 'tfcase', title: , quiz-title: , author: (id), contributors: [id], 
+#          keywords: [], images: [id], image-stacks: [id], history, findings, diagnosis, discussion,
+#          pt-name, pt-mrn, study-acc, date-created: , date-last-read: , date-updated: , needs-follow-up: 
+#
+
+class TFcase(object):
     def create(self, data):
-        case_id = str(uuid.uuid4().hex)
+        case_id = str(uuid.uuid4())
+        data['type'] = tfcase
         datastring = json.dumps(data)
         conn = connect_db()
         cur = conn.cursor()
