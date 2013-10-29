@@ -5,8 +5,11 @@ import psycopg2.extras
 import uuid
 import json
 import os
+import socket
+import platform
 
-thishost = os.uname()
+thishost = platform.uname()
+
 if 'Darwin' in thishost:
     pg_conn_string = """
         dbname='me' 
@@ -16,7 +19,14 @@ elif 'proj-38857' in thishost:
     pg_conn_string = """
                     dbname='action' 
                     user='action'
-             """
+            """
+elif 'Windows' in thishost:
+    pg_conn_string = """
+                    host='localhost'
+                    dbname='postgres'
+                    user='postgres'
+                    password='grasswindsoul'
+            """
 else:
     pg_conn_string = """
                     dbname='postgres' 

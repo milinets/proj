@@ -4,6 +4,7 @@ from beaker.middleware import SessionMiddleware
 import requests
 import os
 import socket
+import platform
 import sys
 import shutil
 import re
@@ -25,7 +26,7 @@ session_opts = {
 	'session.type' : 'file',
 	'session.timeout' : 900,
 	'session.cookie_expires' : True,
-	'session.data_dir' : './data',
+	'session.data_dir' : '/data',
 	'session.auto' : True
 }
 
@@ -463,20 +464,20 @@ server_names['sslcherrypy'] = SSLCherryPy
 
 debug(True)
 if __name__ == '__main__':
-    thishost = os.uname()
-    print thishost
-    thisip = socket.gethostbyname(socket.gethostname())
-    print thisip
-    if 'Darwin' in thishost or 'proj-38857' in thishost:
-        hostip = '0.0.0.0'
-    else:
-        hostip = '10.6.112.211'
+	thishost = platform.uname()
+	print thishost
+	if 'Darwin' in thishost or 'proj-38857' in thishost:
+		hostip = '0.0.0.0'
+	elif 'Windows' in thishost:
+		hostip = '10.6.112.212'
+	else:
+		hostip = '10.6.112.211'
 
     # wwh
 	# run(app=app, host='localhost', port=443, reloader=True, server='sslcherrypy')
-	
+
 	# localhost
 	# run(app=app, host='0.0.0.0', port=3000, reloader=True, server='sslcherrypy')
 
     # localhost without ssl
-    run(app=app, host=hostip, port=3000, reloader=True)
+	run(app=app, host=hostip, port=3000, reloader=True)

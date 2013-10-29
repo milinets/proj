@@ -43,15 +43,19 @@ appTemplates.listimage = hereDoc(function(){/*
             <img src="/static/caseimages/<%= filename %>" width="100px" />
             <p>ID: <%= id %></p>
         </a>
-*/});        
+*/});
+
+appTemplates.editimage = hereDoc(function(){/*
+        <a href="/static/caseimages/<%= filename %>" class="list-group-item" style="display:block;width:120px;float:left">
+            <img src="/static/caseimages/<%= filename %>" width="100px" />
+            <p>ID: <%= id %></p>
+        </a>
+*/});
+
 
 appTemplates.caseeditview = hereDoc(function(){/*
 <div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">
-      Case Edit Form
-    </h3>
-  </div>
+  <div class="panel-heading"><h3 class="panel-title">Case Edit Form</h3></div>
   <div class="panel-body">
   <form id="case_edit" class="form-horizontal"> 
       <div class="form-group">
@@ -101,6 +105,24 @@ appTemplates.caseeditview = hereDoc(function(){/*
         </div>
     </div>
   </form>
+  </div> <!-- panel body -->
+</div> <!-- panel -->
+
+<div class="container">
+  <div class="row" style="margin-bottom:10px">
+    <div id="image-dropzone" class="col-sm-4 col-sm-offset-1" style="border:3px dashed gray">
+    <p class="dz-default dz-message" style="text-align:center">Drag images here</p>
+   </div>
+   <div id="image-stack-dropzone" class="col-sm-4 col-sm-offset-1" style="border:3px dashed red">
+     <p class="dz-default dz-message" style="text-align:center">Drag image stacks here</p>
+   </div>  
+ </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading"><h3 class="panel-title">Images</h3></div>
+  <div id="imagelist" class="panel-body container list-group">
+
 </div>
 */});
 
@@ -133,19 +155,6 @@ appTemplates.casereadview = hereDoc(function(){/*
           <button id="delete_button" class="btn btn-success">Delete this case</button>
   </div>
 </div>
-</div>
-<div class="panel panel-default col-sm-8">
-       <h5>Image upload area.</h5>
-       <div class="container">
-       <div class="row">
-           <div id="image-dropzone" class="col-md-6">
-               <img src="someimage.png" height="150px" />
-           </div>
-           <div id="image-stack-dropzone" class="col-md-6">
-               <img src="someotherimage.png" height="150px" />
-           </div>
-       </div> 
-       </div>
 </div>
 <div id="imagelist" class="list-group">
     <h5>Image List area</h5>

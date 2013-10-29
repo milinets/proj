@@ -14,7 +14,7 @@ from dbfuncs import connect_db, pg_conn_string
 class TFcase(object):
     def create(self, data):
         case_id = str(uuid.uuid4())
-        data['type'] = tfcase
+        data['type'] = 'tfcase'
         datastring = json.dumps(data)
         conn = connect_db()
         cur = conn.cursor()

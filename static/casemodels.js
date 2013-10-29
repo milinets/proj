@@ -29,8 +29,38 @@ CaseCreateView = Backbone.View.extend({
       this.render();
     },
     render: function(){
-      this.$el.html( this.template() );
-      return this;
+        this.$el.html( this.template() );
+        $("#image-dropzone").dropzone({
+            init: function(){
+                var dropz= this;
+                this.on("addedfile", function(file) {
+                    console.log(file);
+                });
+                this.on("complete", function(file) {
+                    dropz.removeFile(file);
+                });
+            },
+            url: "/j/upload_image_to/"+this.model.id,
+            clickable: true,
+            acceptedFiles: 'image/*',
+            autoProcessQueue: true
+        });
+        $("#image-stack-dropzone").dropzone({
+            init: function(){
+                var dropz= this;
+                this.on("addedfile", function(file) {
+                    console.log(file);
+                });
+                this.on("complete", function(file) {
+                    dropz.removeFile(file);
+                });
+            },
+            url: "/j/upload_image_stack_to/"+this.model.id,
+            clickable: true,
+            acceptedFiles: 'image/*',
+            autoProcessQueue: true
+        });
+    return this;
     },
     events: {
         "change #case_entry": "refresh_case",
@@ -93,37 +123,6 @@ CaseReadView = Backbone.View.extend({
                             });
             }
         });  
-        $("#image-dropzone").dropzone({
-            init: function(){
-                var dropz= this;
-                this.on("addedfile", function(file) {
-                    console.log(file);
-                });
-                this.on("complete", function(file) {
-                    dropz.removeFile(file);
-                });
-            },
-            url: "/j/upload_image_to/"+this.model.id,
-            clickable: true,
-            acceptedFiles: 'image/*',
-            autoProcessQueue: true
-        });
-
-        $("#image-stack-dropzone").dropzone({
-            init: function(){
-                var dropz= this;
-                this.on("addedfile", function(file) {
-                    console.log(file);
-                });
-                this.on("complete", function(file) {
-                    dropz.removeFile(file);
-                });
-            },
-            url: "/j/upload_image_stack_to/"+this.model.id,
-            clickable: true,
-            acceptedFiles: 'image/*',
-            autoProcessQueue: true
-        });
 
         return this;
     },
@@ -165,7 +164,49 @@ CaseUpdateView = Backbone.View.extend({
         this.model.on("change",this.render,this);
     },
     render: function(){
+        var that=this;
+        $.ajax({
+            url: '/j/images/'+ this.model.get('id'),
+            type: 'GET',
+            success: function(data) {
+                if (data.error) {
+                    humane.log(data.error)
+                } else {
+                    $('#imagelist').empty()
+                    _.each(data, function(image) {
+                     $('#imagelist').append(_.template(appTemplates.listimage,image));
+                    });
+                }
+            }
+        });
         this.$el.html( this.template(this.model.attributes) );
+        var that=this;
+        $("#image-dropzone").dropzone({
+            init: function(){
+                var dropz= this;
+                this.on("complete", function(file) {
+                    dropz.removeFile(file);
+                    that.render();
+                });
+            },
+            url: "/j/upload_image_to/"+this.model.id,
+            clickable: true,
+            acceptedFiles: 'image/*',
+            autoProcessQueue: true
+        });
+        $("#image-stack-dropzone").dropzone({
+            init: function(){
+                var dropz= this;
+                this.on("complete", function(file) {
+                    dropz.removeFile(file);
+                    that.render();
+                });
+            },
+            url: "/j/upload_image_stack_to/"+this.model.id,
+            clickable: true,
+            acceptedFiles: 'image/*',
+            autoProcessQueue: true
+        });        
         return this;
     },
     events: {
