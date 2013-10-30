@@ -53,7 +53,11 @@ appTemplates.listimagemodal = hereDoc(function(){/*
         <h4 class="modal-title"><%= caption %></h4>
       </div>
       <div class="modal-body">
-        <img src="/static/caseimages/<%= filename %>">
+        <div class="container">
+          <div class="row">
+            <img class="col-md-12" src="/static/caseimages/<%= filename %>">
+          </div>
+        </div>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -61,9 +65,12 @@ appTemplates.listimagemodal = hereDoc(function(){/*
 */});
 
 appTemplates.editimage = hereDoc(function(){/*
-        <a href="/static/caseimages/<%= filename %>" class="list-group-item" style="display:block;float:left">
+        <div id="<%= filename %>" class="list-group-item" style="display:block;float:left">
             <img src="/static/caseimages/<%= filename %>" height="128" width="128">
-        </a>
+            <label for="caption" class="control-label"></label>
+            <input type="text" id="caption" class="form-control" value="<%= caption %>">
+            <button id="submit_button" class="btn btn-success">Submit</button>
+        </div>
 */});
 
 appTemplates.editimagemodal = hereDoc(function(){/*
@@ -112,22 +119,20 @@ appTemplates.caseeditview = hereDoc(function(){/*
           <textarea class="form-control" id="history" rows="2"><%= history %></textarea>
         </div>
         <div class="col-sm-4">
-          <label for="findings" class="control-label">Findings</label>
-          <textarea class="form-control" id="findings" rows="2"><%= findings %></textarea>
+          <label for="diagnosis" class="control-label">Diagnosis</label>
+          <textarea class="form-control" id="diagnosis" rows="2"><%= diagnosis %></textarea>
         </div>
         <div class="col-sm-4">
-          <label for="discussion" class="control-label">Discussion</label>
-          <textarea class="form-control" id="discussion" rows="2"><%= discussion %></textarea>
+          <label for="quiz_title" class="control-label">Quiz Title</label>
+          <textarea class="form-control" id="quiz_title" rows="2"><%= quiz_title %></textarea>
         </div>
       </div>
       <div class="form-group">
         <div class="col-sm-4">
           <label for="needs_follow_up" class="control-label">Needs Follow-up?</label>
-          <input type="checkbox" id="needs_follow_up" name="needs_follow_up" value="<%= needs_follow_up %>"/>
+          <input type="checkbox" id="needs_follow_up" name="needs_follow_up" checked="<%= needs_follow_up %>"/>
         </div>
         <div class="col-sm-4">
-          <label for="quiz_title">Quiz Title</label>
-          <input type="text" id="quiz_title" name="quiz_title" value="<%= quiz_title %>"/>
         </div>
         <div class="col-sm-4">
           <button id="submit_button" class="btn btn-success">Submit</button>
@@ -165,22 +170,12 @@ appTemplates.casereadview = hereDoc(function(){/*
     </h3>
   </div>
   <div class="panel-body">
-          <h5>MRN</h5>
-          <p><%= mrn %></p>
-          <h5>ACC</h5>
-          <p><%= acc %></p>
-          <h5>Last Name</h5>
-          <p><%= lname %></p>
           <h5>History</h5>
           <p><%= history %></p>
           <h5>Findings</h5>
           <p><%= findings %></p>
-          <h5>Discussion</h5>
-          <p><%= discussion %></p>
-          <h5>Needs Follow-up</h5>
-          <p><%= needs_follow_up %></p>
-          <h5>Quiz Title</h5>
-          <p><%= quiz_title %></p>
+          <h5>Diagnosis</h5>
+          <p><%= diagnosis %></p>
           <button id="edit_button" class="btn btn-success">Edit this case</button>
           <button id="delete_button" class="btn btn-success">Delete this case</button>
   </div>
@@ -225,22 +220,20 @@ appTemplates.casecreateview = hereDoc(function(){/*
           <textarea class="form-control" id="history" rows="2"></textarea>
         </div>
         <div class="col-sm-4">
-          <label for="findings" class="control-label">Findings</label>
-          <textarea class="form-control" id="findings" rows="2"></textarea>
+          <label for="diagnosis" class="control-label">Findings</label>
+          <textarea class="form-control" id="diagnosis" rows="2"></textarea>
         </div>
         <div class="col-sm-4">
-          <label for="discussion" class="control-label">Discussion</label>
-          <textarea class="form-control" id="discussion" rows="2"></textarea>
+          <label for="quiz_title" class="control-label">Discussion</label>
+          <textarea class="form-control" id="quiz_title" rows="2"></textarea>
         </div>
       </div>
       <div class="form-group">
         <div class="col-sm-4">
           <label for="needs_follow_up" class="control-label">Needs Follow-up?</label>
-          <input type="checkbox" id="needs_follow_up" name="needs_follow_up" />
+          <input type="checkbox" id="needs_follow_up" checked="needs_follow_up" />
         </div>
         <div class="col-sm-4">
-          <label for="quiz_title">Quiz Title</label>
-          <input type="text" id="quiz_title" name="quiz_title" />
         </div>
         <div class="col-sm-4">
           <button id="submit_button" class="btn btn-success">Submit</button>

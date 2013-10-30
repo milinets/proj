@@ -6,7 +6,7 @@ CaseModel = Backbone.Model.extend({
         acc: '',
         findings: '',
         history: '',
-        discussion: '',
+        diagnosis: '',
         needs_follow_up: '',
         quiz_title: '',
         images: []
@@ -30,58 +30,24 @@ CaseCreateView = Backbone.View.extend({
     },
     render: function(){
         this.$el.html( this.template() );
-        $("#image-dropzone").dropzone({
-            init: function(){
-                var dropz= this;
-                this.on("addedfile", function(file) {
-                    console.log(file);
-                });
-                this.on("complete", function(file) {
-                    dropz.removeFile(file);
-                });
-            },
-            url: "/j/upload_image_to/"+this.model.id,
-            clickable: true,
-            acceptedFiles: 'image/*',
-            autoProcessQueue: true
-        });
-        $("#image-stack-dropzone").dropzone({
-            init: function(){
-                var dropz= this;
-                this.on("addedfile", function(file) {
-                    console.log(file);
-                });
-                this.on("complete", function(file) {
-                    dropz.removeFile(file);
-                });
-            },
-            url: "/j/upload_image_stack_to/"+this.model.id,
-            clickable: true,
-            acceptedFiles: 'image/*',
-            autoProcessQueue: true
-        });
-    return this;
+        return this;
     },
     events: {
-        "change #case_entry": "refresh_case",
         "click #submit_button": "submit_case",
         "click #reset_button": "reset_case"
     },
-    refresh_case: function(){
+    submit_case: function(event){
+        event.preventDefault();
         this.model.set({
             title: $("#title").val(),
             mrn: $("#mrn").val(),
             lname: $("#lname").val(),
             acc: $("#acc").val(),
             history: $("#history").val(),
-            findings: $("#findings").val(),
-            discussion: $("#discussion").val(),
-            needs_follow_up: $("#needs_follow_up").checked,
+            diagnosis: $("#diagnosis").val(),
             quiz_title: $("#quiz_title").val(),
-        });
-    },
-    submit_case: function(event){
-        event.preventDefault();
+            needs_follow_up: $("#needs_follow_up").attr('checked')
+        });        
         this.model.save(null,{
             success: function(model,response,options) {
                 app.navigate('caseread/'+model.get('id'), {trigger: true});                
@@ -193,6 +159,7 @@ CaseUpdateView = Backbone.View.extend({
     },
     render: function(){
         var that=this;
+        this.$el.html( this.template(this.model.attributes) );        
         $.ajax({
             url: '/j/images/'+ this.model.get('id'),
             type: 'GET',
@@ -207,8 +174,6 @@ CaseUpdateView = Backbone.View.extend({
                 }
             }
         });
-        this.$el.html( this.template(this.model.attributes) );
-        var that=this;
         $("#image-dropzone").dropzone({
             init: function(){
                 var dropz= this;
@@ -242,21 +207,18 @@ CaseUpdateView = Backbone.View.extend({
         "click #submit_button": "submit_case",
         "click #reset_button": "reset_case"
     },
-    refresh_case: function(){
+    submit_case: function(event){
+        event.preventDefault();
         this.model.set({
             title: $("#title").val(),
             mrn: $("#mrn").val(),
             lname: $("#lname").val(),
             acc: $("#acc").val(),
             history: $("#history").val(),
-            findings: $("#findings").val(),
-            discussion: $("#discussion").val(),
-            needs_follow_up: $("#needs_follow_up").checked,
+            diagnosis: $("#diagnosis").val(),
             quiz_title: $("#quiz_title").val(),
+            needs_follow_up: $("#needs_follow_up").attr('checked')
         });
-    },
-    submit_case: function(event){
-        event.preventDefault();
         this.model.save(null,{
             success: function(model,response,options) {
                 app.navigate('caseread/'+model.get('id'), {trigger: true});                
