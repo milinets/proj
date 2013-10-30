@@ -111,24 +111,52 @@ CaseReadView = Backbone.View.extend({
         this.model.on("change",this.render,this);
     },
     render: function(){
+        var that = this;
         this.$el.html( this.template(this.model.attributes) );
         $.ajax({
-            type : 'GET',
-            url : '/j/images/'+this.model.id,
-            dataType : 'json',
-            success : function(data){
-                        $('#imagelist').empty;
-                        _.each(data, function(file){
-                               $('#imagelist').append(_.template(appTemplates.listimage,file));
-                            });
+            url: '/j/images/'+ this.model.get('id'),
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if (data.error) {
+                    humane.log(data.error)
+                } else {
+                    $('#imagelist').empty()
+                    that.imagelist = [];
+                    _.each(data, function(image, key) {
+                        that.imagelist.push({
+                            'key':key,
+                            'filename':image.filename,
+                            'caption':image.caption || 'No caption found.'});
+                        image['key'] = key;
+                        $('#imagelist').append(_.template(appTemplates.listimage,image));
+                    });
+                }
             }
-        });  
-
+        });
         return this;
     },
     events: {
         "click #edit_button": "doEdit",
-        "click #delete_button": "doDelete"
+        "click #delete_button": "doDelete",
+        "click #imagelist a" : "showmodal"
+    },
+    showmodal: function(event){
+        event.preventDefault();
+        var that=this;
+        filename = $(event.target).closest('a').attr('id');
+        thisimage = $.grep(this.imagelist, function(e){return e.filename === filename})[0];
+        maxidx = this.imagelist.length - 1;
+        idx = thisimage.key;
+        $('#thismodalcontainer').html(_.template(appTemplates.listimagemodal,thisimage));
+        $('#thismodal').modal('show');
+        $('body').mousewheel(function(event, delta, deltaX, deltaY) {
+            idx = idx + delta;
+            if (idx < 0) idx = maxidx;
+            if (idx > maxidx) idx = 0;
+            $('#thismodal').find('img').attr('src','/static/caseimages/'+that.imagelist[idx].filename);
+            $('#thismodal').find('h4').html(that.imagelist[idx].caption);
+        }); 
     },
     doEdit: function(event){
         app.navigate('caseupdate/'+this.model.id, {trigger: true});

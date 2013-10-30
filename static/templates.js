@@ -31,7 +31,7 @@ appTemplates.searchform = hereDoc(function(){/*
 */});
         
 appTemplates.listrow = hereDoc(function(){/*
-        <a href="#caseread/<%= id %>" class="list-group-item" style="display:block;width:50%%;float:left">
+        <a href="#caseread/<%= id %>" class="list-group-item" style="display:block;width:50%;float:left">
             <h4><%= title %></h4>
             <p>MRN: <%= mrn %></p>
             <p>ID: <%= id %></p>
@@ -39,17 +39,47 @@ appTemplates.listrow = hereDoc(function(){/*
 */});        
 
 appTemplates.listimage = hereDoc(function(){/*
-        <a href="/static/caseimages/<%= filename %>" class="list-group-item" style="display:block;width:120px;float:left">
-            <img src="/static/caseimages/<%= filename %>" width="100px" />
-            <p>ID: <%= id %></p>
+        <a id="<%= filename %>" href="/static/caseimages/<%= filename %>" class="list-group-item" style="display:block;float:left;border:0px">
+            <img src="/static/caseimages/<%= filename %>" height="128" width="128">
         </a>
 */});
 
+appTemplates.listimagemodal = hereDoc(function(){/*
+<div id="thismodal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><%= caption %></h4>
+      </div>
+      <div class="modal-body">
+        <img src="/static/caseimages/<%= filename %>">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+*/});
+
 appTemplates.editimage = hereDoc(function(){/*
-        <a href="/static/caseimages/<%= filename %>" class="list-group-item" style="display:block;width:120px;float:left">
-            <img src="/static/caseimages/<%= filename %>" width="100px" />
-            <p>ID: <%= id %></p>
+        <a href="/static/caseimages/<%= filename %>" class="list-group-item" style="display:block;float:left">
+            <img src="/static/caseimages/<%= filename %>" height="128" width="128">
         </a>
+*/});
+
+appTemplates.editimagemodal = hereDoc(function(){/*
+<div id="thismodal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title"><%= caption %></h4>
+      </div>
+      <div class="modal-body">
+        <img src="/static/caseimages/<%= filename %>">
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 */});
 
 
@@ -110,13 +140,13 @@ appTemplates.caseeditview = hereDoc(function(){/*
 
 <div class="container">
   <div class="row" style="margin-bottom:10px">
-    <div id="image-dropzone" class="col-sm-4 col-sm-offset-1" style="border:3px dashed gray">
+  <div id="image-dropzone" class="col-sm-4 col-sm-offset-1" style="border:3px dashed gray">
     <p class="dz-default dz-message" style="text-align:center">Drag images here</p>
-   </div>
-   <div id="image-stack-dropzone" class="col-sm-4 col-sm-offset-1" style="border:3px dashed red">
-     <p class="dz-default dz-message" style="text-align:center">Drag image stacks here</p>
-   </div>  
- </div>
+  </div>
+  <div id="image-stack-dropzone" class="col-sm-4 col-sm-offset-1" style="border:3px dashed red">
+    <p class="dz-default dz-message" style="text-align:center">Drag image stacks here</p>
+  </div>  
+  </div>
 </div>
 
 <div class="panel panel-default">
@@ -159,6 +189,7 @@ appTemplates.casereadview = hereDoc(function(){/*
 <div id="imagelist" class="list-group">
     <h5>Image List area</h5>
 </div>
+<div id="thismodalcontainer"></div>
 */});
 
 appTemplates.casecreateview = hereDoc(function(){/*

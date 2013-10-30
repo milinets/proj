@@ -50,7 +50,7 @@ class TFimage():
                     mylist.append(mydict)
             except:
                 print mydict + " Doesn't work"
-        return mylist
+        return sorted(mylist, key=lambda case: case['date-created'], reverse=True)
         
     
         
