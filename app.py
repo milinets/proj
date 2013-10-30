@@ -26,7 +26,7 @@ session_opts = {
 	'session.type' : 'file',
 	'session.timeout' : 900,
 	'session.cookie_expires' : True,
-	'session.data_dir' : '/data',
+	'session.data_dir' : './data',
 	'session.auto' : True
 }
 

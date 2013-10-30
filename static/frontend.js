@@ -42,8 +42,7 @@ var app = new AppRouter;
 app.on("route:blank", function(){});
 
 app.on("route:home", function() {
-    $("#main_container").html("<h2>This is the homepage</h2>");
-    humane.log('hello');
+    this.showView($('#main_container'), new HomePageView());
 });
     
 app.on("route:about", function() {
