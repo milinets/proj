@@ -37,17 +37,10 @@ CaseCreateView = Backbone.View.extend({
         "click #reset_button": "reset_case"
     },
     submit_case: function(event){
+        var that = this;
         event.preventDefault();
-        this.model.set({
-            title: $("#title").val(),
-            mrn: $("#mrn").val(),
-            lname: $("#lname").val(),
-            acc: $("#acc").val(),
-            history: $("#history").val(),
-            diagnosis: $("#diagnosis").val(),
-            quiz_title: $("#quiz_title").val(),
-            needs_follow_up: $("#needs_follow_up").attr('checked')
-        });        
+        var inputs = this.$el.find('.form-control');
+        _.each(inputs, function(inpt) { that.model.set(inpt.id,inpt.value) });
         this.model.save(null,{
             success: function(model,response,options) {
                 app.navigate('caseread/'+model.get('id'), {trigger: true});                
@@ -117,11 +110,12 @@ CaseReadView = Backbone.View.extend({
         $('#thismodalcontainer').html(_.template(appTemplates.listimagemodal,thisimage));
         $('#thismodal').modal('show');
         $('body').mousewheel(function(event, delta, deltaX, deltaY) {
+            event.preventDefault();
             idx = idx + delta;
             if (idx < 0) idx = maxidx;
             if (idx > maxidx) idx = 0;
-            $('#thismodal').find('img').attr('src','/static/caseimages/'+that.imagelist[idx].filename);
-            $('#thismodal').find('h4').html(that.imagelist[idx].caption);
+            $('#thismodal img').attr('src','/static/caseimages/'+that.imagelist[idx].filename);
+            $('#thismodal h4').html(that.imagelist[idx].caption);
         }); 
     },
     doEdit: function(event){

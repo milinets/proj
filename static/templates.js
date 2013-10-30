@@ -220,11 +220,11 @@ appTemplates.casecreateview = hereDoc(function(){/*
           <textarea class="form-control" id="history" rows="2"></textarea>
         </div>
         <div class="col-sm-4">
-          <label for="diagnosis" class="control-label">Findings</label>
+          <label for="diagnosis" class="control-label">Diagnosis</label>
           <textarea class="form-control" id="diagnosis" rows="2"></textarea>
         </div>
         <div class="col-sm-4">
-          <label for="quiz_title" class="control-label">Discussion</label>
+          <label for="quiz_title" class="control-label">Quiz Title</label>
           <textarea class="form-control" id="quiz_title" rows="2"></textarea>
         </div>
       </div>
