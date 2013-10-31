@@ -109,7 +109,10 @@ CaseReadView = Backbone.View.extend({
         idx = thisimage.key;
         $('#thismodalcontainer').html(_.template(appTemplates.listimagemodal,thisimage));
         $('#thismodal').modal('show');
-        $('body').mousewheel(function(event, delta, deltaX, deltaY) {
+        $('#thismodal').on('hide.bs.modal', function() {
+            $('body').unbind('mousewheel');
+        });
+        $('body').bind('mousewheel',function(event, delta, deltaX, deltaY) {
             event.preventDefault();
             idx = idx + delta;
             if (idx < 0) idx = maxidx;
