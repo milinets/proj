@@ -83,7 +83,7 @@ HomePageView = Backbone.View.extend({
         $.ajax({
         	type: "POST",
         	url: "/j/case",
-        	contentType: 'application/json',
+        	contentType: 'application/json; charset=utf-8',
         	dataType: 'json',
         	data: JSON.stringify(form_obj)
         })
