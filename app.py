@@ -127,35 +127,33 @@ def jgetallcases():
 @site.post('/j/case')
 def jpostcase():
     if not thisuser.loggedIn:
-        abort(401, 'You are not logged in.')
+    	return {'error': 'You are not logged in.'}
     try:
         return tfcase.create(request.json)
     except:
-        print "error: ", sys.exc_info()
-        abort(405, sys.exc_info())
+    	return {'error': sys.exc_info()}
 
 ### get case from database, or refresh
 @site.get('/j/case/<caseid>')
 def jgetcase(caseid):
     if not thisuser.loggedIn:
-        abort(401,'You are not logged in.')
+    	return {'error': 'You are not logged in.'}
     try:
         return tfcase.read(caseid)
     except:
-        print "error: ", sys.exc_info()        
-        abort(401, 'Could not find this case.')
+    	return {'error': sys.exc_info()}
 
 ### update existing case
 @site.put('/j/case/<caseid>')
 def jputcase(caseid):
     if not thisuser.loggedIn:
-        abort(401, 'You are not logged in.')
+        return {'error':'You are not logged in.'}
     try:
         data = request.json
         del data['id']
         return tfcase.update(caseid,data)
     except:
-        abort(401, sys.exc_info())
+    	return {'error': sys.exc_info()}
 
 ### delete a case
 @site.delete('/j/case/<caseid>')
@@ -165,7 +163,7 @@ def jdeletecase(caseid):
     try:
         return tfcase.delete(caseid)
     except:
-        abort(401, 'Could not find this case.')
+    	return {'error': 'Could not find this case.'}
         
 @site.post('/j/upload_image_to/<caseid>')
 def do_image_upload(caseid):
@@ -200,15 +198,12 @@ def jgetimage(caseid):
         thisimage = TFimage()        
         return json.dumps(thisimage.searchimagesbytfcase(caseid))
     except:
-        print "error: ", sys.exc_info()        
         return {'error': repr(sys.exc_info())}
-
 
 @site.post('/j/upload_image_stack_to/<caseid>')
 def do_image_stack_upload(caseid):
     pass
         
-
 @site.get('/register')
 def signup_form():
 	session = request.environ.get('beaker.session')

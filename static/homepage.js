@@ -9,6 +9,17 @@ appTemplates.loginfirst = hereDoc(function(){/*
 */});
 
 appTemplates.homepage = hereDoc(function(){/*
+	<style type="text/css">
+		#logprocedure, #entercase {
+			border: 1px dotted blue;
+		}
+		input, select {
+			margin-bottom: 5px;
+		}
+		button {
+			margin: auto;
+		}
+	</style>
 	<div class="row">
 		<form id="logprocedure" role="form" class="col-sm-3 col-sm-offset-2">
 		<div class="form-group">
@@ -30,11 +41,20 @@ appTemplates.homepage = hereDoc(function(){/*
 			</select>
 			<label for="date" class="control-label sr-only">Date of procedure</label>
 			<input type="date" class="form-control" id="date" />
+			<button type="submit" id="submit_log" class="btn btn-success">Log Procedure</button>
 		</div>
-		<button type="submit" id="submit_log" class="btn btn-success">Log Procedure</button>
 		</form>
-		<form id="entercase" class="col-sm-6">
+		<form id="entercase" role="form" class="col-sm-3 col-sm-offset-1">
+		<div class="form-group">
 			<h3>Enter a Case</h3>
+			<label for="title" class="control-label sr-only">Case Title</label>
+			<input id="title" type="text" placeholder="Case Title" class="form-control" />
+			<label for="mrn" class="control-label sr-only">Case Title</label>
+			<input id="mrn" type="text" placeholder="Medical Record Number" class="form-control" />
+			<label for="diagnosis" class="control-label sr-only">Diagnosis</label>
+			<input id="diagnosis" type="text" placeholder="Diagnosis" class="form-control" />
+			<button type="submit" id="submit_case" class="btn btn-success">Submit Case</button>
+		</div>
 		</form>
 	</div>
 */});
@@ -47,13 +67,29 @@ HomePageView = Backbone.View.extend({
       window.user.on('change', this.render, this);
     },
     render: function(){
-    	if (window.user.get('loggedIn')) {
-    		this.$el.html ( this.homepage_template() );
-    	} else {
-    		this.$el.html ( this.loginfirst_template() );
-    	}
+   		this.$el.html ( this.homepage_template() );
         return this;
     },
     events: {
+    	"click #submit_case": "submitcase"
+    },
+    submitcase : function(event){
+    	event.preventDefault();
+        var inputs = this.$el.find('#entercase .form-control');
+        var form_obj = _.reduce(inputs, function(memo,elem){
+        	memo[elem.id] = elem.value; return memo
+        }, {});
+        console.log(form_obj);
+        $.ajax({
+        	type: "POST",
+        	url: "/j/case",
+        	contentType: 'application/json',
+        	dataType: 'json',
+        	data: JSON.stringify(form_obj)
+        })
+        .done(function(data){
+        	if (data.error) {humane.log(data.error)}
+        	else {app.navigate('caseupdate/'+data.id, {trigger: true});} 
+        	});
     }
 });

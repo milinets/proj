@@ -1,3 +1,25 @@
+appTemplates.searchform = hereDoc(function(){/*
+    <form class="form-horizontal" id="searchForm">
+        <div class="form-group">
+            <label for="searchterm" class="control-label sr-only">Search</label>
+            <div class="col-md-offset-4 col-md-4">
+              <input type="search" class="form-control" name="searchterm" id="searchterm" placeholder="Enter Search Term Here"/>
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-default" id="search_button">Search</button>
+            </div>
+         </div>
+    </form>
+*/});
+        
+appTemplates.listrow = hereDoc(function(){/*
+        <a href="#caseread/<%= id %>" class="list-group-item" style="display:block;width:50%;float:left">
+            <h4><%= title %></h4>
+            <p>MRN: <%= mrn %></p>
+            <p>ID: <%= id %></p>
+        </a>
+*/});
+
 SearchView = Backbone.View.extend({
     initialize: function(){
         this.render();

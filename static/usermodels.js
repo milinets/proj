@@ -1,3 +1,15 @@
+appTemplates.login_template = hereDoc(function(){/*
+    <li>
+        <a id="login_button" href="#"><span><img src="/static/img/email_sign_in_blue.png"/></span></a>
+    </li>
+*/});
+
+appTemplates.logout_template = hereDoc(function(){/*
+    <li>
+        <a id="logout_button" class="btn btn-default" href="#">Log out, <%= email %> </a>
+    </li>
+*/});
+
 LoginView = Backbone.View.extend({
     initialize: function(){
         var that=this;
