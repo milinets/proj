@@ -28,6 +28,7 @@ LoginView = Backbone.View.extend({
                   },
                   error: function(xhr, status, err) {
                     navigator.id.logout();
+                    humane.log('Login failure: '+ err);
                     console.log("Login failure: " + err);
                   }
                 });
@@ -42,9 +43,7 @@ LoginView = Backbone.View.extend({
                   url: '/auth/logout', // This is a URL on your website.
                   success: function(res, status, xhr) { 
                       that.model.set(res);
-                      var request = new XMLHttpRequest();                   
-                      request.open("get", "/logout", false, "false", "false");
-                      request.send();
+                      app.navigate('#home', {trigger: true});
                   },
                   error: function(xhr, status, err) { 
                       console.log("Logout failure: " + err); 
@@ -72,7 +71,9 @@ LoginView = Backbone.View.extend({
 });
 
 UserModel = Backbone.Model.extend({
-    initialize: function() {
-
+    defaults: {
+      'email': '',
+      'first_name': '',
+      'last_name': ''
     }
 });

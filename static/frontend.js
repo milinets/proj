@@ -12,8 +12,7 @@ var AppRouter = Backbone.Router.extend({
             "caseupdate/:id": "caseupdate",
             "listallcases": "listallcases",
             "searchresult": "searchresult",
-            "registeruser": "registeruser",
-            "updateuser/:id": "updateuser",
+            "user": "user",
             "blank": "blank"
         },
         showView: function(selector, view) {
@@ -84,12 +83,9 @@ app.on("route:listallcases", function() {
     });
 });
 
-app.on("route:registeruser", function() {
-    console.log("register user");
+app.on("route:user", function() {
+    this.showView($('#main_container'), new UserAccountView({model: window.user}));
 });
 
-app.on("route:updateuser", function(id) {
-    console.log("update user #"+id);    
-});
 
 Backbone.history.start();

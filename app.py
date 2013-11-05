@@ -73,11 +73,11 @@ def login():
 
         # Check if the assertion was valid
         if verification_data['status'] == 'okay':
-            thisuser.login(verification_data['email'])
-            print 'You are logged in'
-            session =  request.environ.get('beaker.session')
-            session['email'] = verification_data['email']
-            return {'email': verification_data['email'], 'loggedIn': True}
+        	session = request.environ.get('beaker.session')
+        	user = thisuser.login(verification_data['email'], session)
+        	if user:
+	            print 'You are logged in %s' % (session,)
+            	return {'email': verification_data['email'], 'loggedIn': True}
 
     # Oops, something failed. Abort.
     abort(500)
@@ -96,6 +96,41 @@ def checklogin():
         return {'email': session.get('email'), 'loggedIn': True}
     else:
         return {'email': '', 'loggedIn': False}
+
+@site.get('/j/user')
+def get_user():
+	session = request.environ.get('beaker.session')
+	user_id = session['user_id']
+	try:
+		return {'user' : thisuser.getbyid(user_id) }
+	except:
+		return {'error' : "Couldn't get userid."}
+
+@site.put('/j/user/<user_id>')
+def update_user(user_id):
+	new_user_info = request.json
+	print request.json
+	session = request.environ.get('beaker.session') 
+	logged_user = thisuser.getbyid(session['user_id'])
+	if new_user_info['id'] == logged_user['id']:
+		del new_user_info['id']
+		logged_user.update(new_user_info)
+		return thisuser.update(logged_user)
+
+@site.put('/j/upload_userpic/<picid>')
+def upload_userpic(picid):
+	if not thisuser.loggedIn:
+		return {'error': 'You are not logged in.'}
+	for i in request.files.getlist('file'):
+		filepath = os.path.join('./static/userimages',picid)
+		fileobj = i.file
+        with open(filepath,"wb") as target_file:
+            while True:
+                datachunk = fileobj.read(1024)
+                if not datachunk:
+                    break
+                target_file.write(datachunk)
+	return "ok"
 
 ###### Search the database and return collection of cases         
 @site.post('/j/search')
