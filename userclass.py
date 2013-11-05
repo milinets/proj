@@ -11,68 +11,76 @@ from dbfuncs import connect_db, pg_conn_string
 #
 
 class TFuser(object):
+    # finds user object in database and returns it
+    # no change to self    
     def getbyemail(self,email):
-        conn=connect_db()
-        cur = conn.cursor()
-        cur.execute("SELECT id, data from db WHERE data::text LIKE %s",('%'+email+'%',))
-        myid, mydata = cur.fetchone()[0]
-        conn.commit()
-        cur.close()
-        conn.close()
-        mydata['id'] = myid
-        return mydata
+        try:
+            conn=connect_db()
+            cur = conn.cursor()
+            cur.execute("SELECT data from dba WHERE data->>'type' = 'tfuser' and data->>'email' = %s",(email,))
+            mydata = cur.fetchone()[0]
+            conn.commit()
+            cur.close()
+            conn.close()
+            return mydata
+        except:
+            return False
 
+    # finds user object in database and returns it
+    # no change to self
     def getbyid(self,user_id):
-        conn=connect_db()
-        cur = conn.cursor()
-        cur.execute("SELECT data from db WHERE id = %s",(user_id,))
-        mydata = cur.fetchone()[0]
-        conn.commit()
-        cur.close()
-        conn.close()
-        mydata['id'] = user_id
-        return mydata
+        try:
+            conn=connect_db()
+            cur = conn.cursor()
+            cur.execute("SELECT data from dba WHERE data->>'type' = 'tfuser' and data->>'id' = %s",(user_id,))
+            mydata = cur.fetchone()[0]
+            conn.commit()
+            cur.close()
+            conn.close()
+            return mydata
+        except:
+            return False
 
-    def create_user(self,email):
+    def create_user_in_db(self,email):
         user_id = str(uuid.uuid4())
         picture = str(uuid.uuid4())
-        data = {'type' : 'tfuser', 'email': email, 'picture': picture}
-        if email.split('@')[-1] == 'mednet.ucla.edu' or email == 'moe@mailinator.com':
-            pass
-        else:
-            data['role'] = 'provisional'
+        data = {'type' : 'tfuser', 'email': email, 'picture': picture, 'id' : user_id}
         datastring = json.dumps(data)
         conn=connect_db()
         cur = conn.cursor()
-        cur.execute("INSERT INTO db (id,data) VALUES (%s,%s)", (user_id,datastring))
+        cur.execute("INSERT INTO dba VALUES (%s)",(datastring,))
         conn.commit()
         cur.close()
         conn.close()
-        data['id'] = user_id
         return data
 
     def update(self, user):
         conn=connect_db()
         cur = conn.cursor()
         user_id = user['id']
-        del user['id']
         datastring = json.dumps(user)
-        cur.execute("UPDATE db SET data = %s WHERE id = %s",(datastring,user_id))
+        cur.execute("UPDATE dba SET data = %s WHERE data->>'id' = %s",(datastring,user_id))
         conn.commit()
         cur.close()
         conn.close()
-        mydata.setdefault('picture',str(uuid.uuid4()))
-        user['id'] = user_id
         return user
     
     def login(self,email,session):
-        try: 
-            user = self.getbyemail(email)
-            session['user_id'] = user['id']
+        possible_user = self.getbyemail(email)
+        if possible_user:
+            print possible_user
+            self.user = possible_user
+            session['user_id'] = self.user['id']
+
             return True
-        except:
-            session['user_id'] = (self.create_user(email))['id']
+        else:
+            self.create_user_in_db(email)
+            self.user = self.getbyemail(email)
+            session['user_id'] = self.user['id']
             return True
+
+    def logout(self):
+        self.user = {}
     
     def loggedIn(self):
         return 'user_id' in bottle.request.environ.get('beaker.session')

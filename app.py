@@ -74,8 +74,7 @@ def login():
         # Check if the assertion was valid
         if verification_data['status'] == 'okay':
         	session = request.environ.get('beaker.session')
-        	user = thisuser.login(verification_data['email'], session)
-        	if user:
+        	if thisuser.login(verification_data['email'], session):
 	            print 'You are logged in %s' % (session,)
             	return {'email': verification_data['email'], 'loggedIn': True}
 
@@ -85,6 +84,7 @@ def login():
 @site.post('/auth/logout')
 def logout():
     session = request.environ.get('beaker.session')
+    thisuser.logout()
     if session:
         session.delete()
     return {'email': None, 'loggedIn': False}
@@ -92,15 +92,15 @@ def logout():
 @site.post('/auth/check')
 def checklogin():
     session = request.environ.get('beaker.session')
-    if 'email' in session:
-        return {'email': session.get('email'), 'loggedIn': True}
+    if 'user_id' in session:
+        return {'email': thisuser.user.get('email'), 'loggedIn': True}
     else:
         return {'email': '', 'loggedIn': False}
 
 @site.get('/j/user')
 def get_user():
 	session = request.environ.get('beaker.session')
-	user_id = session['user_id']
+	user_id = session.get('user_id')
 	try:
 		return {'user' : thisuser.getbyid(user_id) }
 	except:
@@ -117,12 +117,12 @@ def update_user(user_id):
 		logged_user.update(new_user_info)
 		return thisuser.update(logged_user)
 
-@site.put('/j/upload_userpic/<picid>')
-def upload_userpic(picid):
+@site.put('/j/upload_userpic')
+def upload_userpic():
 	if not thisuser.loggedIn:
 		return {'error': 'You are not logged in.'}
 	for i in request.files.getlist('file'):
-		filepath = os.path.join('./static/userimages',picid)
+		filepath = os.path.join('./static/userimages',thisuser.user.get('picture'))
 		fileobj = i.file
         with open(filepath,"wb") as target_file:
             while True:
@@ -147,7 +147,7 @@ def jpostsearch():
         
 @site.get('/j/searchall')
 def jgetallcases():
-    if thisuser.loggedIn:
+    if 'user_id' in request.environ.get('beaker.session'):
         try:
             response.content_type = 'application/json'
             return json.dumps(tfcase.list_all_cases())
@@ -185,8 +185,7 @@ def jputcase(caseid):
         return {'error':'You are not logged in.'}
     try:
         data = request.json
-        del data['id']
-        return tfcase.update(caseid,data)
+        return tfcase.update(data)
     except:
     	return {'error': sys.exc_info()}
 
@@ -202,7 +201,7 @@ def jdeletecase(caseid):
         
 @site.post('/j/upload_image_to/<caseid>')
 def do_image_upload(caseid):
-    if not thisuser.loggedIn:
+    if 'user_id' not in request.environ.get('beaker.session'):
         return {'error': 'You are not logged in.'}
     resp_array = []
     for i in request.files.getlist('file'):
@@ -226,11 +225,11 @@ def do_image_upload(caseid):
 
 @site.get('/j/images/<caseid>')
 def jgetimage(caseid):
-    if not thisuser.loggedIn:
+    if 'user_id' not in request.environ.get('beaker.session'):
         return {'error': 'You are not logged in.'}
     try:
         response.content_type = 'application/json'
-        thisimage = TFimage()        
+        thisimage = TFimage()   
         return json.dumps(thisimage.searchimagesbytfcase(caseid))
     except:
         return {'error': repr(sys.exc_info())}
@@ -239,6 +238,8 @@ def jgetimage(caseid):
 def do_image_stack_upload(caseid):
     pass
         
+
+
 @site.get('/register')
 def signup_form():
 	session = request.environ.get('beaker.session')
@@ -305,6 +306,10 @@ def do_upload(case_id):
 		resp_array.append({'name':filename,'url': '/cases/'+ case_id + '/' + filename, \
 			"delete_url":'/delete_image/'+case_id+'/'+filename, "delete_type":"DELETE"})
 	return json.dumps(resp_array)
+
+
+
+
 
 
 @site.get('/newcase')
