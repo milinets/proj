@@ -84,7 +84,12 @@ app.on("route:listallcases", function() {
 });
 
 app.on("route:user", function() {
+    if (!window.user.get('loggedIn')) {
+        humane.log('Please log in first.');
+        app.navigate('#home');
+    } else {
     this.showView($('#main_container'), new UserAccountView({model: window.user}));
+    }
 });
 
 

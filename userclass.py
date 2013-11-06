@@ -70,8 +70,9 @@ class TFuser(object):
         if possible_user:
             print possible_user
             self.user = possible_user
+            self.user['loggedIn'] = True
+            self.update(self.user)
             session['user_id'] = self.user['id']
-
             return True
         else:
             self.create_user_in_db(email)

@@ -26,21 +26,15 @@ appTemplates.accountupdate = hereDoc(function(){/*
   </div> <!-- panel body -->
 </div> <!-- panel -->
 
-<div class = "panel panel-default">
-  <div class="panel-body">
-<!--    <img src="/static/userimages/<%= picture %>" /> -->
-  </div>
-</div>
+<div class="row">
 
-
-<div class="container">
-  <div class="row" style="margin-bottom:10px">
-    <div id="profile-image" class="col-sm-4 col-sm-offset-1" style="border:3px dashed gray">
-    <p> Hello </p>
-      <p class="dz-default dz-message" style="text-align:center">Drag new profile picture here</p>
-    <p> Hello </p>
-    </div>
+  <div class="container col-sm-2 col-sm-offset-3">
+    <h4>User Image</h4>
+      <img src="/static/userimages/<%= picture %>" /> 
   </div>
+  </div>
+
+<div id="image-dropzone">
 </div>
 
 */});
@@ -64,8 +58,9 @@ UserAccountView = Backbone.View.extend({
     },
     render: function(){
         var that=this;
+        console.log(this.model.attributes);
         this.$el.html( this.template(this.model.attributes) );
-        $("#profile-image").dropzone({
+        $("div#image-dropzone").dropzone({
             init: function(){
                 var dropz= this;
                 this.on("complete", function(file) {
@@ -73,7 +68,7 @@ UserAccountView = Backbone.View.extend({
                     that.render();
                 });
             },
-            url: "/j/upload_userpic/"+that.model.get('picture'),
+            url: "/j/upload_userpic/"+this.model.get('picture'),
             clickable: true,
             acceptedFiles: 'image/*',
             autoProcessQueue: true

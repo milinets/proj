@@ -14,7 +14,7 @@ LoginView = Backbone.View.extend({
     initialize: function(){
         var that=this;
         navigator.id.watch({
-              loggedInUser: this.model.get('loggedIn') ? this.model.get('email') : null,
+              loggedInUser: this.model.get('loggedIn'),
               onlogin: function(assertion) {
                 // A user has logged in! Here you need to:
                 // 1. Send the assertion to your backend for verification and to create a session.
@@ -28,8 +28,10 @@ LoginView = Backbone.View.extend({
                   },
                   error: function(xhr, status, err) {
                     navigator.id.logout();
+                    that.model.clear({silent:true});
+                    that.model.set({'loggedIn':false});
+                    app.navigate('#home',{trigger:true});
                     humane.log('Login failure: '+ err);
-                    console.log("Login failure: " + err);
                   }
                 });
               },
@@ -42,7 +44,8 @@ LoginView = Backbone.View.extend({
                   type: 'POST',
                   url: '/auth/logout', // This is a URL on your website.
                   success: function(res, status, xhr) { 
-                      that.model.set(res);
+                      that.model.clear({silent:true});
+                      that.model.set({'loggedIn':false});
                       app.navigate('#home', {trigger: true});
                   },
                   error: function(xhr, status, err) { 
@@ -72,8 +75,6 @@ LoginView = Backbone.View.extend({
 
 UserModel = Backbone.Model.extend({
     defaults: {
-      'email': '',
-      'first_name': '',
-      'last_name': ''
+      'loggedIn':false
     }
 });
