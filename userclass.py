@@ -44,7 +44,7 @@ class TFuser(object):
     def create_user_in_db(self,email):
         user_id = str(uuid.uuid4())
         picture = str(uuid.uuid4())
-        data = {'type' : 'tfuser', 'email': email, 'picture': picture, 'id' : user_id}
+        data = {'type' : 'tfuser', 'email': email, 'picture': picture, 'id' : user_id, 'first_name': '', 'last_name': ''}
         datastring = json.dumps(data)
         conn=connect_db()
         cur = conn.cursor()
