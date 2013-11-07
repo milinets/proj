@@ -28,14 +28,18 @@ appTemplates.accountupdate = hereDoc(function(){/*
 
 <div class="row">
 
-  <div class="container col-sm-2 col-sm-offset-3">
+  <div class="col-sm-2 col-sm-offset-3">
     <h4>User Image</h4>
-      <img src="/static/userimages/<%= picture %>" /> 
-  </div>
+      <img id="userimage" src="/static/userimages/<%= picture %>" width="100%"/> 
   </div>
 
-<div id="image-dropzone">
+  <div id="image-dropzone" class="col-sm-4 col-sm-offset-1" style="border:3px dashed gray">
+    <p class="dz-default dz-message" style="text-align:center">Drag images here</p>
+  </div>
+
 </div>
+
+
 
 */});
 
@@ -43,40 +47,28 @@ appTemplates.accountupdate = hereDoc(function(){/*
 UserAccountView = Backbone.View.extend({
     template: _.template(appTemplates.accountupdate),
     initialize: function(){
-        var that = this;
-        $.ajax({
-          async: false,
-          type: 'GET',
-          url: '/j/user',
-          success: function(data) {
-            if (data.error) { humane.log(data.error); }
-            else {
-              that.model.set(data.user);
-            }
-          }
-        });
     },
     render: function(){
         var that=this;
-        console.log(this.model.attributes);
         this.$el.html( this.template(this.model.attributes) );
-        $("div#image-dropzone").dropzone({
-            init: function(){
-                var dropz= this;
-                this.on("complete", function(file) {
-                    dropz.removeFile(file);
-                    that.render();
-                });
+        _.defer(function(){
+          $("#image-dropzone").dropzone({
+            url: '/j/upload_userpic/' + that.model.get('picture'),
+            init: function() {
+              var dropz = this;
+              this.on('complete', function(file){
+                dropz.removeFile(file);
+                $('#userimage').attr("src","/static/userimages/"+that.model.get('picture')+'?'+ (new Date().getTime()));
+              });
             },
-            url: "/j/upload_userpic/"+this.model.get('picture'),
             clickable: true,
-            acceptedFiles: 'image/*',
+            acceptedFiles: 'image/jpeg',
             autoProcessQueue: true
+          });
         });
         return this;
     },
     events: {
-        "change #account_edit": "refresh_case",
         "click #submit_button": "submit_case"
     },
     submit_case: function(event){

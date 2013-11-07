@@ -77,6 +77,7 @@ class TFuser(object):
         else:
             self.create_user_in_db(email)
             self.user = self.getbyemail(email)
+            self.user['loggedIn'] = True
             session['user_id'] = self.user['id']
             return True
 

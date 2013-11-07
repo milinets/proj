@@ -76,7 +76,7 @@ def login():
         	session = request.environ.get('beaker.session')
         	if thisuser.login(verification_data['email'], session):
 	            print 'You are logged in %s' % (session,)
-            	return {'email': verification_data['email'], 'loggedIn': True}
+                return thisuser.user
 
     # Oops, something failed. Abort.
     abort(500)
@@ -93,7 +93,7 @@ def logout():
 def checklogin():
     session = request.environ.get('beaker.session')
     if 'user_id' in session:
-        return {'email': thisuser.user.get('email'), 'loggedIn': True}
+        thisuser.user
     else:
         return {'email': '', 'loggedIn': False}
 
@@ -116,20 +116,28 @@ def update_user(user_id):
 		logged_user.update(new_user_info)
 		return thisuser.update(logged_user)
 
-@site.put('/j/upload_userpic')
-def upload_userpic():
-	if not thisuser.loggedIn:
-		return {'error': 'You are not logged in.'}
-	for i in request.files.getlist('file'):
-		filepath = os.path.join('./static/userimages',thisuser.user.get('picture'))
-		fileobj = i.file
+@site.post('/j/upload_userpic/<picture>')
+def upload_userpic(picture):
+    if not thisuser.loggedIn:
+        return {'error': 'You are not logged in.'}
+    if not (picture == thisuser.user.get('picture')):
+        return {'error': 'Wrong user logged in'}
+    for i in request.files.getlist('file'):
+        print i.filename
+        filepath = os.path.join('./static/userimages',thisuser.user.get('picture'))
+        fileobj = i.file
         with open(filepath,"wb") as target_file:
             while True:
                 datachunk = fileobj.read(1024)
                 if not datachunk:
                     break
                 target_file.write(datachunk)
-	return "ok"
+    return "ok"
+
+@site.get('/j/userpic/<picture>')
+def send_userpic(picture):
+    response.content_type = "image/jpeg"
+    return static_file(picture, root="./static/userimages/")
 
 ###### Search the database and return collection of cases         
 @site.post('/j/search')
@@ -237,9 +245,6 @@ def jgetimage(caseid):
 def do_image_stack_upload(caseid):
     pass
         
-
-
-
 
 @site.get('/procedurelog')
 def procedurelog():
