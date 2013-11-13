@@ -18,7 +18,7 @@ class TFimage():
         datastring = json.dumps(self.data)
         conn = connect_db()
         cur = conn.cursor()
-        cur.execute("INSERT INTO db (id,data) VALUES (%s,%s)", (self.data['id'],datastring))
+        cur.execute("INSERT INTO dba (data) VALUES (%s)", (datastring,))
         conn.commit()
         cur.close()
         conn.close()
@@ -27,29 +27,43 @@ class TFimage():
     def read(self,imageid):
         conn = connect_db()
         cur = conn.cursor()
-        cur.execute("SELECT data from db WHERE id = %s",(imageid,))
+        cur.execute("SELECT data from dba WHERE data->>'id' = %s",(imageid,))
         data = cur.fetchone()[0]
         conn.commit()
         cur.close()
+        self.data = data
         return data
+
+    def update(self):
+        datastring = json.dumps(self.data)
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute("UPDATE dba SET data = %s WHERE data->>'id' = %s",(datastring,self.data.get('id')))
+        conn.commit()
+        cur.close()
+        return True
+
+    def delete(self):
+        conn = connect_db()
+        cur = conn.cursor()
+        cur.execute("DELETE FROM dba WHERE data->>'id' = %s",(self.data.get('id'),))
+        conn.commit()
+        cur.close()
+        return True
 
     def searchimagesbytfcase(self,caseid):
         conn=connect_db()
         cur = conn.cursor()
-        cur.execute("SELECT id, data from db WHERE data::text LIKE %s",('%'+caseid+'%',))
+        cur.execute("SELECT data from dba WHERE data->>'tfcase' = %s",(caseid,))
         data = cur.fetchall()
+        if not data:
+            return []
         conn.commit()
         cur.close()
         conn.close()
         mylist = []
-        for pair in data:
-            id, mydict = pair
-            try:
-                mydict['id'] = id
-                if not mydict.get('deleted'):
-                    mylist.append(mydict)
-            except:
-                print mydict + " Doesn't work"
+        for image in data:
+            mylist.append(image[0])
         return sorted(mylist, key=lambda case: case['date-created'], reverse=True)
         
     

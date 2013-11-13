@@ -60,7 +60,7 @@ CaseReadView = Backbone.View.extend({
                 that.render();
             },
             error: function(model,xhr,options) {
-                humane.log('Status text: '+xhr.statusText+', Status code: '+xhr.status);
+                app.appAlert('Status text: '+xhr.statusText+', Status code: '+xhr.status);
             }
         });
         this.model.on("change",this.render,this);
@@ -74,7 +74,7 @@ CaseReadView = Backbone.View.extend({
             dataType: 'json',
             success: function(data) {
                 if (data.error) {
-                    humane.log(data.error)
+                    app.appAlert(data.error);
                 } else {
                     $('#imagelist').empty()
                     that.imagelist = [];
@@ -127,7 +127,7 @@ CaseReadView = Backbone.View.extend({
                 type: 'DELETE',
                 success: function(data){
                     if (data.error) {
-                        humane.log(data.error)
+                        app.appAlert(data.error)
                     } else {
                         $('#main_container').html('<h3>Case deleted!</h3>');
                     }

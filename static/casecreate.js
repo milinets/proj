@@ -1,4 +1,24 @@
 appTemplates.casecreateview = hereDoc(function(){/*
+
+<style type="text/css">
+  input[type=checkbox] {
+    display: none;
+  }
+  input:checked + label div {
+    width: 50px;
+    height: 50px;
+    background-image: url('static/images/checkbox.png');
+    background-size: 100%;
+  }
+  input:not(:checked) + label div {
+    width: 50px;
+    height: 50px;
+    background-image: url('static/images/checkbox_empty.png');
+    background-size: 100%;
+  }
+</style>
+
+
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">
@@ -41,8 +61,8 @@ appTemplates.casecreateview = hereDoc(function(){/*
       </div>
       <div class="form-group">
         <div class="col-sm-4">
-          <label for="needs_follow_up" class="control-label">Needs Follow-up?</label>
-          <input type="checkbox" id="needs_follow_up" checked="needs_follow_up" />
+          <input type="checkbox" id="needs_follow_up" checked="checked" />
+          <label for="needs_follow_up" class="control-label">Needs Follow-up?<div></div></label>          
         </div>
         <div class="col-sm-4">
         </div>
@@ -86,7 +106,7 @@ CaseCreateView = Backbone.View.extend({
       this.render();
     },
     render: function(){
-        this.$el.html( this.template() );
+        this.$el.html( this.template(this.model) );
         return this;
     },
     events: {
@@ -98,6 +118,7 @@ CaseCreateView = Backbone.View.extend({
         event.preventDefault();
         var inputs = this.$el.find('.form-control');
         _.each(inputs, function(inpt) { that.model.set(inpt.id,inpt.value) });
+        that.model.set('needs_follow_up',$('#needs_follow_up').prop('checked'));
         this.model.save(null,{
             success: function(model,response,options) {
                 app.navigate('caseread/'+model.get('id'), {trigger: true});                

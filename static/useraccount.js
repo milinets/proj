@@ -1,4 +1,17 @@
 appTemplates.accountupdate = hereDoc(function(){/*
+
+<style type="text/css">
+  #image-dropzone {
+    height: 64px;
+    width: 64px;
+    background-image: url('/static/images/up-icon-64.png')
+  }
+  #image-dropzone.dz-drag-hover {
+    background-image: url('static/images/up-hovered-64.png') 
+  }
+</style>
+
+
 <div class="panel panel-default">
   <div class="panel-heading"><h3 class="panel-title">Update User Account</h3></div>
   <div class="panel-body">
@@ -33,12 +46,10 @@ appTemplates.accountupdate = hereDoc(function(){/*
       <img id="userimage" src="/static/userimages/<%= picture %>" width="100%"/> 
   </div>
 
-  <div id="image-dropzone" class="col-sm-4 col-sm-offset-1" style="border:3px dashed gray">
-    <p class="dz-default dz-message" style="text-align:center">Drag images here</p>
+  <div id="image-dropzone">
   </div>
 
 </div>
-
 
 
 */});
@@ -85,7 +96,7 @@ UserAccountView = Backbone.View.extend({
           dataType: 'json',
           contentType: 'application/json; charset=utf-8',          
           success: function(data){
-            if (data.error) {humane.log(data.error);}
+            if (data.error) {app.appAlert(data.error);}
             that.user = data;
             that.render();
           }

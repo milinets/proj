@@ -1,4 +1,24 @@
 appTemplates.caseeditview = hereDoc(function(){/*
+
+<style type="text/css">
+  input[type=checkbox] {
+    display: none;
+  }
+  input:checked + label div {
+    width: 50px;
+    height: 50px;
+    background-image: url('static/images/checkbox.png');
+    background-size: 100%;
+  }
+  input:not(:checked) + label div {
+    width: 50px;
+    height: 50px;
+    background-image: url('static/images/checkbox_empty.png');
+    background-size: 100%;
+  }
+</style>
+
+
 <div class="panel panel-default">
   <div class="panel-heading"><h3 class="panel-title">Case Edit Form</h3></div>
   <div class="panel-body">
@@ -37,8 +57,9 @@ appTemplates.caseeditview = hereDoc(function(){/*
       </div>
       <div class="form-group">
         <div class="col-sm-4">
-          <label for="needs_follow_up" class="control-label">Needs Follow-up?</label>
-          <input type="checkbox" id="needs_follow_up" name="needs_follow_up" checked="<%= needs_follow_up %>"/>
+          <input type="checkbox" id="needs_follow_up" name="needs_follow_up" 
+            <% var f = needs_follow_up ? 'checked' : '' %> <%= f %>  />
+          <label for="needs_follow_up" class="control-label">Needs Follow-up? <div></div></label>
         </div>
         <div class="col-sm-4">
         </div>
@@ -67,6 +88,12 @@ appTemplates.caseeditview = hereDoc(function(){/*
   <div id="imagelist" class="panel-body container list-group">
 
 </div>
+*/});
+
+appTemplates.listimage_foredit = hereDoc(function(){/*
+        <a id="<%= filename %>" href="#editimage/<%= id %>" class="list-group-item" style="display:block;float:left;border:0px">
+            <img src="/static/caseimages/<%= filename %>" height="128" width="128">
+        </a>
 */});
 
 appTemplates.editimage = hereDoc(function(){/*
@@ -103,7 +130,7 @@ CaseUpdateView = Backbone.View.extend({
                 that.render();
             },
             error: function(model,xhr,options) {
-                humane.log('Status text: '+xhr.statusText+', Status code: '+xhr.status);
+                app.appAlert('Status text: '+xhr.statusText+', Status code: '+xhr.status);
             }
         });
         this.model.on("change",this.render,this);
@@ -116,11 +143,11 @@ CaseUpdateView = Backbone.View.extend({
             type: 'GET',
             success: function(data) {
                 if (data.error) {
-                    humane.log(data.error)
+                    app.appAlert(data.error)
                 } else {
                     $('#imagelist').empty()
                     _.each(data, function(image) {
-                     $('#imagelist').append(_.template(appTemplates.listimage,image));
+                     $('#imagelist').append(_.template(appTemplates.listimage_foredit,image));
                     });
                 }
             }
@@ -168,14 +195,14 @@ CaseUpdateView = Backbone.View.extend({
             history: $("#history").val(),
             diagnosis: $("#diagnosis").val(),
             quiz_title: $("#quiz_title").val(),
-            needs_follow_up: $("#needs_follow_up").attr('checked')
+            needs_follow_up: $("#needs_follow_up").prop('checked')
         });
         this.model.save(null,{
             success: function(model,response,options) {
                 app.navigate('caseread/'+model.get('id'), {trigger: true});                
             },
             error: function(model,xhr,options) {
-                humane.log('Status text: '+xhr.statusText+', Status code: '+xhr.status);
+                app.appAlert('Status text: '+xhr.statusText+', Status code: '+xhr.status);
             }
         });
     },

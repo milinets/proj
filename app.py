@@ -3,7 +3,6 @@ from bottle import Bottle, route, run, abort, request, response, template, debug
 from beaker.middleware import SessionMiddleware
 import requests
 import os
-import socket
 import platform
 import sys
 import shutil
@@ -73,9 +72,8 @@ def login():
 
         # Check if the assertion was valid
         if verification_data['status'] == 'okay':
-        	session = request.environ.get('beaker.session')
-        	if thisuser.login(verification_data['email'], session):
-	            print 'You are logged in %s' % (session,)
+            session = request.environ.get('beaker.session')
+            if thisuser.login(verification_data['email'], session):
                 return thisuser.user
 
     # Oops, something failed. Abort.
@@ -108,7 +106,6 @@ def get_user():
 @site.put('/j/user/<user_id>')
 def update_user(user_id):
 	new_user_info = request.json
-	print request.json
 	session = request.environ.get('beaker.session') 
 	logged_user = thisuser.getbyid(session['user_id'])
 	if new_user_info['id'] == logged_user['id']:
@@ -123,7 +120,6 @@ def upload_userpic(picture):
     if not (picture == thisuser.user.get('picture')):
         return {'error': 'Wrong user logged in'}
     for i in request.files.getlist('file'):
-        print i.filename
         filepath = os.path.join('./static/userimages',thisuser.user.get('picture'))
         fileobj = i.file
         with open(filepath,"wb") as target_file:
@@ -216,6 +212,7 @@ def do_image_upload(caseid):
         thisimage.data['id'] = str(uuid.uuid4())
         thisimage.data['type'] = 'tfimage'
         thisimage.data['tfcase'] = caseid
+        thisimage.data['caption'] = ''
         thisimage.data['date-created'] = datetime.datetime.now().isoformat()
         filename = thisimage.data['filename'] = thisimage.data['id'] + '.' + i.filename.split('.')[-1]
         filepath = os.path.join('./static/caseimages',filename)
@@ -230,13 +227,34 @@ def do_image_upload(caseid):
         resp_array.append(thisimage.data)
     return "ok"
 
+@site.get('/j/image/<imageid>')
+def get_image(imageid):
+    thisimage = TFimage()
+    thisimage.read(imageid)
+    return thisimage.data
+
+@site.put('/j/image/<imageid>')
+def update_image(imageid):
+    thisimage = TFimage()
+    thisimage.read(imageid)
+    thisimage.data['caption'] = request.json['caption']
+    thisimage.update()
+    return thisimage.data
+
+@site.delete('/j/image/<imageid>')
+def delete_image(imageid):
+    thisimage = TFimage()
+    thisimage.read(imageid)
+    thisimage.delete()
+    return {"ok":True}
+
 @site.get('/j/images/<caseid>')
 def jgetimage(caseid):
     if 'user_id' not in request.environ.get('beaker.session'):
         return {'error': 'You are not logged in.'}
     try:
+        thisimage = TFimage()
         response.content_type = 'application/json'
-        thisimage = TFimage()   
         return json.dumps(thisimage.searchimagesbytfcase(caseid))
     except:
         return {'error': repr(sys.exc_info())}
