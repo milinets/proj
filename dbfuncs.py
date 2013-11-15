@@ -57,15 +57,6 @@ def createdb(name):
     cur.close()
     conn.close()
 
-def transfertodba():
-    conn = connect_db()
-    cur = conn.cursor()
-    cur.execute("select * from db;")
-    for id, data in cur.fetchall():
-        data = json.dumps(data)
-        cur.execute("INSERT INTO dba VALUES (%s);",(data,))
-    conn.commit()
-    cur.close()
-    conn.close()
+
 
 

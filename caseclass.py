@@ -9,7 +9,7 @@ from dbfuncs import connect_db, pg_conn_string
 # 
 # TFcase: visible: (yes, no, owner), type: 'tfcase', title: , quiz-title: , author: (id), contributors: [id], 
 #          keywords: [], images: [id], image-stacks: [id], history, findings, diagnosis, discussion,
-#          pt-name, pt-mrn, study-acc, date-created: , date-read: , date-updated: , needs-follow-up: 
+#          lname, mrn, acc, date-created: , date-read: , date-updated: , needs-follow-up: 
 #
 
 class TFcase(object):
@@ -66,7 +66,9 @@ class TFcase(object):
     def search(self, searchstring):
         conn=connect_db()
         cur = conn.cursor()
-        cur.execute("SELECT data from dba WHERE data->>'type' = 'tfcase' and data::text LIKE %s",('%'+searchstring+'%',))
+        cur.execute("""SELECT data from dba WHERE to_tsvector('english',data::text) 
+                                                    @@ to_tsquery('english',%s);""", (searchstring,))
+#        cur.execute("SELECT data from dba WHERE data->>'type' = 'tfcase' and data::text LIKE %s",('%'+searchstring+'%',))
         data = cur.fetchall()
         conn.commit()
         cur.close()
