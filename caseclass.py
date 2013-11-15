@@ -25,7 +25,7 @@ class TFcase(object):
         conn.commit()
         cur.close()
         conn.close()
-        data['id'] = case_id
+        self.data = data
         return data
     
     def read(self, case_id):
@@ -36,6 +36,7 @@ class TFcase(object):
         conn.commit()
         cur.close()
         conn.close()
+        self.data = data
         return data
         
     def update(self, data):

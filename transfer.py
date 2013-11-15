@@ -18,3 +18,17 @@ def transfertodba():
     conn.commit()
     cur.close()
     conn.close()
+
+def updatedba():
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("select data->>'id' from dba where (data->'datadump') is not null;")
+    data = cur.fetchall()
+    for case in data:
+    	caseid = case[0]
+    	mycase = TFcase()
+    	print mycase.read(caseid)
+    conn.commit()
+    cur.close()
+    conn.close()
+
