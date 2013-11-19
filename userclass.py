@@ -22,6 +22,7 @@ class TFuser(object):
             conn.commit()
             cur.close()
             conn.close()
+            self.data = mydata
             return mydata
         except:
             return False
@@ -37,6 +38,7 @@ class TFuser(object):
             conn.commit()
             cur.close()
             conn.close()
+            self.data = mydata
             return mydata
         except:
             return False
@@ -52,6 +54,7 @@ class TFuser(object):
         conn.commit()
         cur.close()
         conn.close()
+        self.data = data
         return data
 
     def update(self, user):
@@ -63,6 +66,7 @@ class TFuser(object):
         conn.commit()
         cur.close()
         conn.close()
+        self.data = user
         return user
     
     def login(self,email,session):
