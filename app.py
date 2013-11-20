@@ -74,7 +74,7 @@ def login():
         if verification_data['status'] == 'okay':
             session = request.environ.get('beaker.session')
             if thisuser.login(verification_data['email'], session):
-                return thisuser.user
+                return thisuser.data
 
     # Oops, something failed. Abort.
     abort(500)
@@ -91,7 +91,7 @@ def logout():
 def checklogin():
     session = request.environ.get('beaker.session')
     if 'user_id' in session:
-        thisuser.user
+        return thisuser.data
     else:
         return {'email': '', 'loggedIn': False}
 
@@ -99,7 +99,7 @@ def checklogin():
 def get_user():
     if 'user_id' in request.environ.get('beaker.session'):
 	try:
-		return {'user' : thisuser.user }
+		return {'user' : thisuser.data }
 	except:
 		return {'error' : "Couldn't get userid."}
 
@@ -109,18 +109,18 @@ def update_user(user_id):
 	session = request.environ.get('beaker.session') 
 	logged_user = thisuser.getbyid(session['user_id'])
 	if new_user_info['id'] == logged_user['id']:
-		del new_user_info['id']
 		logged_user.update(new_user_info)
 		return thisuser.update(logged_user)
 
 @site.post('/j/upload_userpic/<picture>')
 def upload_userpic(picture):
-    if not thisuser.loggedIn:
+    session = request.environ.get('beaker.session')
+    if 'user_id' not in session:
         return {'error': 'You are not logged in.'}
-    if not (picture == thisuser.user.get('picture')):
+    if not (picture == thisuser.data.get('picture')):
         return {'error': 'Wrong user logged in'}
     for i in request.files.getlist('file'):
-        filepath = os.path.join('./static/userimages',thisuser.user.get('picture'))
+        filepath = os.path.join('./static/userimages',thisuser.data.get('picture'))
         fileobj = i.file
         with open(filepath,"wb") as target_file:
             while True:

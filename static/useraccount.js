@@ -43,7 +43,7 @@ appTemplates.accountupdate = hereDoc(function(){/*
 
   <div class="col-sm-2 col-sm-offset-3">
     <h4>User Image</h4>
-      <img id="userimage" src="/static/userimages/<%= picture %>" width="100%"/> 
+      <img id="userimage" src="/static/userimages/<%= picture %>?<%= Math.random() %>" width="100%"/> 
   </div>
 
   <div id="image-dropzone">
@@ -73,7 +73,7 @@ UserAccountView = Backbone.View.extend({
               });
             },
             clickable: true,
-            acceptedFiles: 'image/jpeg',
+            acceptedFiles: 'image/*',
             autoProcessQueue: true
           });
         });

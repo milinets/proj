@@ -48,14 +48,29 @@ class TFuser(object):
         picture = str(uuid.uuid4())
         data = {'type' : 'tfuser', 'email': email, 'picture': picture, 'id' : user_id, 'first_name': '', 'last_name': ''}
         datastring = json.dumps(data)
-        conn=connect_db()
-        cur = conn.cursor()
-        cur.execute("INSERT INTO dba VALUES (%s)",(datastring,))
-        conn.commit()
-        cur.close()
-        conn.close()
-        self.data = data
-        return data
+        try:
+            conn=connect_db()
+            cur = conn.cursor()
+            cur.execute("INSERT INTO dba VALUES (%s)",(datastring,))
+            conn.commit()
+            cur.close()
+            conn.close()
+            self.data = data
+            return data
+        except:
+            return False
+
+    def delete_user_from_db(self):
+        try:
+            conn=connect_db()
+            cur = conn.cursor()
+            cur.execute("DELETE FROM dba WHERE data->>'id' = %s;",(self.data['id'],))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return True
+        except:
+            return False
 
     def update(self, user):
         conn=connect_db()
@@ -72,21 +87,20 @@ class TFuser(object):
     def login(self,email,session):
         possible_user = self.getbyemail(email)
         if possible_user:
-            print possible_user
-            self.user = possible_user
-            self.user['loggedIn'] = True
-            self.update(self.user)
-            session['user_id'] = self.user['id']
+            self.data = possible_user
+            self.data['loggedIn'] = True
+            self.update(self.data)
+            session['user_id'] = self.data['id']
             return True
         else:
-            self.create_user_in_db(email)
-            self.user = self.getbyemail(email)
-            self.user['loggedIn'] = True
-            session['user_id'] = self.user['id']
-            return True
+            return False
 
     def logout(self):
-        self.user = {}
+        if self.data:
+            self.data['loggedIn'] = False
+            self.update(self.data)
+            self.data = {}
+            return True
     
     def loggedIn(self):
         return 'user_id' in bottle.request.environ.get('beaker.session')
