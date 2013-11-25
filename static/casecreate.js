@@ -86,6 +86,7 @@ CaseModel = Backbone.Model.extend({
         diagnosis: '',
         needs_follow_up: '',
         quiz_title: '',
+        datadump: '',
         images: []
     },
     urlRoot: '/j/case',

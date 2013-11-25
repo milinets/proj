@@ -62,6 +62,7 @@ appTemplates.caseeditview = hereDoc(function(){/*
           <label for="needs_follow_up" class="control-label">Needs Follow-up? <div></div></label>
         </div>
         <div class="col-sm-4">
+          <%= datadump %>
         </div>
         <div class="col-sm-4">
           <button id="submit_button" class="btn btn-success">Submit</button>

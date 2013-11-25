@@ -96,11 +96,13 @@ class TFuser(object):
             return False
 
     def logout(self):
-        if self.data:
+        try:
             self.data['loggedIn'] = False
             self.update(self.data)
             self.data = {}
             return True
+        except: 
+            return False
     
     def loggedIn(self):
         return 'user_id' in bottle.request.environ.get('beaker.session')

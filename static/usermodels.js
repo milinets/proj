@@ -48,7 +48,8 @@ LoginView = Backbone.View.extend({
                       that.model.set({'loggedIn':false});
                       app.navigate('#home', {trigger: true});
                   },
-                  error: function(xhr, status, err) { 
+                  error: function(xhr, status, err) {
+                      app.navigate('#home', {trigger:true});
                       console.log("Logout failure: " + err); 
                   }
                 });
