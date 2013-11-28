@@ -179,7 +179,7 @@ CaseUpdateView = Backbone.View.extend({
             acceptedFiles: 'image/*',
             autoProcessQueue: true
         });        
-        return this;
+        return this; 
     },
     events: {
         "change #case_edit": "refresh_case",
