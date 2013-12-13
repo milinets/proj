@@ -4,6 +4,7 @@ from beaker.middleware import SessionMiddleware
 import requests
 import os
 import platform
+import socket
 import sys
 import shutil
 import re
@@ -296,7 +297,8 @@ debug(True)
 if __name__ == '__main__':
     thishost = platform.uname()
     print thishost
-    hostip = 'localhost'
+    print socket.gethostbyname_ex('')
+    hostip = '10.6.112.28'
     # wwh
 	# run(app=app, host='localhost', port=443, reloader=True, server='sslcherrypy')
 
