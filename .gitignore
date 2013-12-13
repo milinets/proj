@@ -43,3 +43,4 @@ nosetests.xml
 
 static/caseimages/
 static/caseimages/*
+mybackup.sql
