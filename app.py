@@ -4,6 +4,7 @@ from beaker.middleware import SessionMiddleware
 import requests
 import os
 import platform
+import socket
 import sys
 import shutil
 import re
@@ -22,7 +23,8 @@ from imageclass import TFimage, TFimagestack
 
 site = Bottle()
 session_opts = {
-	'session.type' : 'file',
+	'session.type' : 'cookie',
+    'session.validate_key' : 'validkey',
 	'session.timeout' : 900,
 	'session.cookie_expires' : True,
 	'session.data_dir' : './data',
@@ -304,4 +306,4 @@ if __name__ == '__main__':
 	# run(app=app, host='0.0.0.0', port=3000, reloader=True, server='sslcherrypy')
 
     # localhost without ssl
-    run(app=app, host=hostip, port=3000, reloader=True)
+    run(app=app, host=hostip, port=8000, reloader=True)

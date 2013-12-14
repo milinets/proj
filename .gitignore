@@ -21,6 +21,7 @@ data/
 data/*
 cases/
 cases/*
+data/con*
 
 # lib
 lib64
