@@ -23,7 +23,8 @@ from imageclass import TFimage, TFimagestack
 
 site = Bottle()
 session_opts = {
-	'session.type' : 'file',
+	'session.type' : 'cookie',
+    'session.validate_key' : 'validkey',
 	'session.timeout' : 900,
 	'session.cookie_expires' : True,
 	'session.data_dir' : './data',
@@ -297,8 +298,7 @@ debug(True)
 if __name__ == '__main__':
     thishost = platform.uname()
     print thishost
-    print socket.gethostbyname_ex('')
-    hostip = '10.6.112.28'
+    hostip = 'localhost'
     # wwh
 	# run(app=app, host='localhost', port=443, reloader=True, server='sslcherrypy')
 
@@ -306,4 +306,4 @@ if __name__ == '__main__':
 	# run(app=app, host='0.0.0.0', port=3000, reloader=True, server='sslcherrypy')
 
     # localhost without ssl
-    run(app=app, host=hostip, port=3000, reloader=True)
+    run(app=app, host=hostip, port=8000, reloader=True)

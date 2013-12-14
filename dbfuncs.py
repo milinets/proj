@@ -10,25 +10,7 @@ import platform
 
 thishost = platform.uname()
 
-if 'Darwin' in thishost:
-    pg_conn_string = """
-        dbname='me' 
-        user='me'
-    """
-elif 'proj-38857' in thishost:
-    pg_conn_string = """
-                    dbname='action' 
-                    user='action'
-            """
-elif 'Windows' in thishost:
-    pg_conn_string = """
-                    host='localhost'
-                    dbname='postgres'
-                    user='postgres'
-                    password='grasswindsoul'
-            """
-else:
-    pg_conn_string = """
+pg_conn_string = """
                     dbname='postgres' 
                     user='postgres'
     """
