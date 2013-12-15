@@ -297,8 +297,11 @@ server_names['sslcherrypy'] = SSLCherryPy
 debug(True)
 if __name__ == '__main__':
     thishost = platform.uname()
-    print thishost
-    hostip = 'localhost'
+    
+    if 'ub' in thishost:
+        hostip = '192.168.1.143'
+    else:
+        hostip = 'localhost'
     # wwh
 	# run(app=app, host='localhost', port=443, reloader=True, server='sslcherrypy')
 
