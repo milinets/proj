@@ -11,3 +11,6 @@ pip install -r requirements.txt
 # sudo vim /etc/postgresql/9.3/main/pg_hba.conf change authentication to trust
 # sudo service postgresql restart
 # then, psql -U postgres -f mybackup.sql postgres 
+# ssh-keygen -t rsa -C "linetsky@gmail.com"
+# eval `ssh-agent -s`
+# ssh-add id_rsa
