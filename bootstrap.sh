@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# sudo apt-get update && sudo apt-get -u upgrade
+# sudo apt-get install dkms
+# mount /dev/cdrom /mnt
+#
+
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main" >> /etc/apt/sources.list.d/postgresql.list' 
 sudo apt-get update
