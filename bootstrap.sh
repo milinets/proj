@@ -5,7 +5,7 @@ sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main
 sudo apt-get update
 sudo apt-get install -y git vim ssh python-dev python-pip postgresql-9.3 libpq-dev
 sudo apt-get install -y postgresql-server-dev-9.3 postgresql-contrib-9.3
-mkdir ~/proj
+sudo apt-get upgrade
 pip install -r requirements.txt
 
 # sudo vim /etc/postgresql/9.3/main/pg_hba.conf change authentication to trust
