@@ -64,11 +64,20 @@ class TFcase(object):
         cur.close()
         conn.close()
     
-    def search(self, searchstring):
+    def search(self, searchstring, images_only):
         conn=connect_db()
         cur = conn.cursor()
-        cur.execute("""SELECT data from dba WHERE to_tsvector('english',data::text) 
-                                                    @@ to_tsquery('english',%s);""", (searchstring,))
+        if images_only == "true":
+            cur.execute("""SELECT data from dba 
+                                WHERE to_tsvector('english',data::text) @@ to_tsquery('english',%s) 
+                                AND data->>'id' IN (SELECT data->>'tfcase' from dba WHERE data->>'type' = 'tfimage')
+                            ORDER BY data->>'date-updated' DESC
+                """, (searchstring,))
+        else:
+            cur.execute("""SELECT data from dba 
+                                WHERE to_tsvector('english',data::text) @@ to_tsquery('english',%s)
+                            ORDER BY data->>'date-updated' DESC
+                """, (searchstring,))
 #        cur.execute("SELECT data from dba WHERE data->>'type' = 'tfcase' and data::text LIKE %s",('%'+searchstring+'%',))
         data = cur.fetchall()
         conn.commit()
@@ -85,6 +94,26 @@ class TFcase(object):
         conn=connect_db()
         cur = conn.cursor()
         cur.execute("SELECT data FROM dba WHERE data->>'type' = 'tfcase' ORDER BY data->>'date-updated' DESC")
+        data = cur.fetchall()
+        conn.commit()
+        cur.close()
+        conn.close()
+        mylist = []
+        for case in data:
+            case = case[0]
+            if not case.get('deleted'):
+               mylist.append(case)
+        return mylist
+
+    def list_all_cases_with_images(self):
+        conn=connect_db()
+        cur = conn.cursor()
+        cur.execute("""SELECT * 
+                        FROM dba 
+                            WHERE data->>'id' IN 
+                                (SELECT data->>'tfcase' FROM dba 
+                                        WHERE data->>'type' = 'tfimage') 
+                            ORDER BY data->>'date-updated' DESC""")
         data = cur.fetchall()
         conn.commit()
         cur.close()

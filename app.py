@@ -3,6 +3,7 @@ from bottle import Bottle, route, run, abort, request, response, template, debug
 from beaker.middleware import SessionMiddleware
 import requests
 import os
+import subprocess
 import platform
 import socket
 import sys
@@ -143,14 +144,15 @@ def jpostsearch():
     if thisuser.loggedIn:
         try:
             searchterm = request.POST.get('searchterm')
+            images_only = request.POST.get('images_only')
             response.content_type = 'application/json'
-            return json.dumps(tfcase.search(searchterm))
+            return json.dumps(tfcase.search(searchterm,images_only))
         except:
             print "error: ", sys.exc_info()        
     else:
         return {'error':'Please log in first.'}
         
-@site.get('/j/searchall')
+@site.post('/j/searchall')
 def jgetallcases():
     if 'user_id' in request.environ.get('beaker.session'):
         try:
@@ -161,6 +163,17 @@ def jgetallcases():
     else:
         return {'error':'Please log in first.'}
               
+@site.post('/j/searchallwithimages')
+def jgetallcases():
+    if 'user_id' in request.environ.get('beaker.session'):
+        try:
+            response.content_type = 'application/json'
+            return json.dumps(tfcase.list_all_cases_with_images())
+        except:
+            print "error: ", sys.exc_info()
+    else:
+        return {'error':'Please log in first.'}
+
 ###### Case paths
 
 ### create a new case
@@ -297,11 +310,8 @@ server_names['sslcherrypy'] = SSLCherryPy
 debug(True)
 if __name__ == '__main__':
     thishost = platform.uname()
-    
-    if 'ub' in thishost:
-        hostip = '192.168.1.143'
-    else:
-        hostip = 'localhost'
+    hostip = subprocess.check_output("hostname -I",shell=True).replace(' \n','')
+
     # wwh
 	# run(app=app, host='localhost', port=443, reloader=True, server='sslcherrypy')
 

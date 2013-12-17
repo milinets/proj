@@ -12,6 +12,7 @@ var AppRouter = Backbone.Router.extend({
             "caseupdate/:id": "caseupdate",
             "editimage/:id": "editimage",
             "listallcases": "listallcases",
+            "listallcaseswithimages": "listallcaseswithimages",
             "searchresult": "searchresult",
             "user": "user",
             "blank": "blank"
@@ -97,6 +98,19 @@ app.on("route:searchresult",function(){
 app.on("route:listallcases", function() {
     var that=this;
     $.get("/j/searchall", function(data){
+        if (data.error) {
+            app.appAlert(data.error);
+            return
+        } else {
+            app.casesList = data;
+            app.navigate('#searchresult', {trigger: true});
+        }
+    });
+});
+
+app.on("route:listallcaseswithimages", function() {
+    var that=this;
+    $.get("/j/searchallwithimages", function(data){
         if (data.error) {
             app.appAlert(data.error);
             return

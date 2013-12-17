@@ -2,11 +2,15 @@ appTemplates.searchform = hereDoc(function(){/*
     <form class="form-horizontal" id="searchForm">
         <div class="form-group">
             <label for="searchterm" class="control-label sr-only">Search</label>
-            <div class="col-md-offset-4 col-md-4">
+            <div class="col-md-offset-3 col-md-3">
               <input type="search" class="form-control" name="searchterm" id="searchterm" placeholder="Enter Search Term Here"/>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <button class="btn btn-default" id="search_button">Search</button>
+            </div>
+            <div>
+                <input type="checkbox" id="images_only" name="images_only" checked />
+                <label for="images_only" class="control-label">Only show cases with images?</label>
             </div>
          </div>
     </form>
@@ -33,15 +37,27 @@ SearchView = Backbone.View.extend({
     },
     clear_input: function(){
         $('#searchterm').val('');
+        $('#images_only').prop('checked',true);
     },
     doSearch: function( event ){
         event.preventDefault();
-        if ($('#searchterm').val().length < 2) {
-            app.appAlert('Search term must be more than 1 character');
-            return
+        var searchterm = $('#searchterm').val();
+        var images_only = $('#images_only').prop('checked');
+        if (searchterm == '' && images_only) {
+            var searchfunc = '/j/searchallwithimages';
+            var opts = {};
+        } else if (searchterm == '') {
+            var searchfunc = '/j/searchall';
+            var opts = {};
+        } else if (images_only) {
+            var searchfunc = '/j/search';
+            var opts = {searchterm: searchterm, images_only: true};
+        } else {
+            var searchfunc = '/j/search';
+            var opts = {searchterm: searchterm, images_only: false};
         }
         var that = this;
-        $.post('/j/search', {searchterm: $('#searchterm').val()}, function(data) {
+        $.post(searchfunc, opts, function(data) {
             that.clear_input();
             app.navigate('blank',true);
             if (data.error) {
