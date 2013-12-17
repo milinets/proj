@@ -11,8 +11,6 @@ var AppRouter = Backbone.Router.extend({
             "caseread/:id": "caseread",
             "caseupdate/:id": "caseupdate",
             "editimage/:id": "editimage",
-            "listallcases": "listallcases",
-            "listallcaseswithimages": "listallcaseswithimages",
             "searchresult": "searchresult",
             "user": "user",
             "blank": "blank"
