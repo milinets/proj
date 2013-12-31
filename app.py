@@ -22,6 +22,7 @@ from userclass import TFuser
 from caseclass import TFcase
 from imageclass import TFimage, TFimagestack
 
+
 site = Bottle()
 session_opts = {
 	'session.type' : 'cookie',
@@ -291,19 +292,26 @@ def procedure_manual():
 def caseofmonth():
     pass
 
+def https_redirect():
+    if not request.get_header('X-Forwarded-Proto','http') == 'https':
+        url = request.url.replace('http://','https://', 1)
+        code = 301
+    redirect(url, code)
+
 class SSLCherryPy(ServerAdapter):
-	def run(self,handler):
-		from cherrypy import wsgiserver
-		server = wsgiserver.CherryPyWSGIServer((self.host,self.port),handler)
+    def run(self,handler):
+        from cherrypy import wsgiserver
+        server = wsgiserver.CherryPyWSGIServer((self.host,self.port),handler)
 		# openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes
 		# technique here: http://dgtool.blogspot.com/2011/12/ssl-encryption-in-python-bottle.html
-		cert = './server.pem'
-		server.ssl_certificate = cert
-		server.ssl_private_key = cert
-		try:
-			server.start()
-		finally:
-			server.stop()
+        cert = './server.pem'
+#        server.ssl_adapter = wsgiserver.SSLAdapter(cert,cert)
+        server.ssl_certificate = cert
+        server.ssl_private_key = cert
+        try:
+            server.start()
+        finally:
+            server.stop()
 
 server_names['sslcherrypy'] = SSLCherryPy
 
@@ -313,10 +321,13 @@ if __name__ == '__main__':
     hostip = subprocess.check_output("hostname -I",shell=True).replace(' \n','')
 
     # wwh
-	# run(app=app, host='localhost', port=443, reloader=True, server='sslcherrypy')
+    # run(app=app, host=hostip, port=443, reloader=True, server='sslcherrypy')
 
 	# localhost
 	# run(app=app, host='0.0.0.0', port=3000, reloader=True, server='sslcherrypy')
 
     # localhost without ssl
-    run(app=app, host=hostip, port=8000, reloader=True)
+    # run(app=app, host=hostip, port=8000, reloader=True, server='paste')
+
+    from paste import httpserver
+    httpserver.serve(app, host=hostip, port=443, ssl_pem='./server.pem')

@@ -22,6 +22,7 @@ data/*
 cases/
 cases/*
 data/con*
+email*.*
 
 # lib
 lib64
