@@ -330,4 +330,4 @@ if __name__ == '__main__':
     # run(app=app, host=hostip, port=8000, reloader=True, server='paste')
 
     from paste import httpserver
-    httpserver.serve(app, host=hostip, port=443, ssl_pem='./server.pem')
+    httpserver.serve(app, host='0.0.0.0', port=443, ssl_pem='./server.pem')
