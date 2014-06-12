@@ -46,3 +46,5 @@ nosetests.xml
 static/caseimages/
 static/caseimages/*
 mybackup.sql
+.DS_Store
+_bashrc
