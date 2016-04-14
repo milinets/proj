@@ -14,7 +14,6 @@ import datetime
 import random
 import hashlib
 import hmac
-from string import letters
 import json
 from collections import namedtuple
 import dbfuncs
@@ -25,12 +24,12 @@ from imageclass import TFimage, TFimagestack
 
 site = Bottle()
 session_opts = {
-	'session.type' : 'cookie',
+    'session.type' : 'cookie',
     'session.validate_key' : 'validkey',
-	'session.timeout' : 900,
-	'session.cookie_expires' : True,
-	'session.data_dir' : './data',
-	'session.auto' : True
+    'session.timeout' : 900,
+    'session.cookie_expires' : True,
+    'session.data_dir' : './data',
+    'session.auto' : True
 }
 
 app = SessionMiddleware(site, session_opts)
@@ -45,7 +44,7 @@ def server_static(filepath):
 
 @site.route('/cases/<case_id>/<filename>')
 def server_case_image(case_id,filename):
-	return static_file(filename, root="./cases/"+case_id)
+    return static_file(filename, root="./cases/"+case_id)
 
 @site.get('/')
 def index():
@@ -102,19 +101,19 @@ def checklogin():
 @site.get('/j/user')
 def get_user():
     if 'user_id' in request.environ.get('beaker.session'):
-	try:
-		return {'user' : thisuser.data }
-	except:
-		return {'error' : "Couldn't get userid."}
+        try:
+            return {'user' : thisuser.data }
+        except:
+            return {'error' : "Couldn't get userid."}
 
 @site.put('/j/user/<user_id>')
 def update_user(user_id):
-	new_user_info = request.json
-	session = request.environ.get('beaker.session') 
-	logged_user = thisuser.getbyid(session['user_id'])
-	if new_user_info['id'] == logged_user['id']:
-		logged_user.update(new_user_info)
-		return thisuser.update(logged_user)
+    new_user_info = request.json
+    session = request.environ.get('beaker.session') 
+    logged_user = thisuser.getbyid(session['user_id'])
+    if new_user_info['id'] == logged_user['id']:
+        logged_user.update(new_user_info)
+        return thisuser.update(logged_user)
 
 @site.post('/j/upload_userpic/<picture>')
 def upload_userpic(picture):
@@ -149,7 +148,7 @@ def jpostsearch():
             response.content_type = 'application/json'
             return json.dumps(tfcase.search(searchterm,images_only))
         except:
-            print "error: ", sys.exc_info()        
+            print("error: " + sys.exc_info())
     else:
         return {'error':'Please log in first.'}
         
@@ -160,7 +159,7 @@ def jgetallcases():
             response.content_type = 'application/json'
             return json.dumps(tfcase.list_all_cases())
         except:
-            print "error: ", sys.exc_info()
+            print("error: "+sys.exc_info())
     else:
         return {'error':'Please log in first.'}
               
@@ -171,7 +170,7 @@ def jgetallcases():
             response.content_type = 'application/json'
             return json.dumps(tfcase.list_all_cases_with_images())
         except:
-            print "error: ", sys.exc_info()
+            print("error: "+sys.exc_info())
     else:
         return {'error':'Please log in first.'}
 
@@ -181,21 +180,21 @@ def jgetallcases():
 @site.post('/j/case')
 def jpostcase():
     if not thisuser.loggedIn:
-    	return {'error': 'You are not logged in.'}
+        return {'error': 'You are not logged in.'}
     try:
         return tfcase.create(request.json)
     except:
-    	return {'error': sys.exc_info()}
+        return {'error': sys.exc_info()}
 
 ### get case from database, or refresh
 @site.get('/j/case/<caseid>')
 def jgetcase(caseid):
     if not thisuser.loggedIn:
-    	return {'error': 'You are not logged in.'}
+        return {'error': 'You are not logged in.'}
     try:
         return tfcase.read(caseid)
     except:
-    	return {'error': sys.exc_info()}
+        return {'error': sys.exc_info()}
 
 ### update existing case
 @site.put('/j/case/<caseid>')
@@ -206,7 +205,7 @@ def jputcase(caseid):
         data = request.json
         return tfcase.update(data)
     except:
-    	return {'error': sys.exc_info()}
+        return {'error': sys.exc_info()}
 
 ### delete a case
 @site.delete('/j/case/<caseid>')
@@ -216,7 +215,7 @@ def jdeletecase(caseid):
     try:
         return tfcase.delete(caseid)
     except:
-    	return {'error': 'Could not find this case.'}
+        return {'error': 'Could not find this case.'}
         
 @site.post('/j/upload_image_to/<caseid>')
 def do_image_upload(caseid):
@@ -302,8 +301,8 @@ class SSLCherryPy(ServerAdapter):
     def run(self,handler):
         from cherrypy import wsgiserver
         server = wsgiserver.CherryPyWSGIServer((self.host,self.port),handler)
-		# openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes
-		# technique here: http://dgtool.blogspot.com/2011/12/ssl-encryption-in-python-bottle.html
+        # openssl req -new -x509 -keyout server.pem -out server.pem -days 365 -nodes
+        # technique here: http://dgtool.blogspot.com/2011/12/ssl-encryption-in-python-bottle.html
         cert = './server.pem'
 #        server.ssl_adapter = wsgiserver.SSLAdapter(cert,cert)
         server.ssl_certificate = cert
@@ -323,8 +322,8 @@ if __name__ == '__main__':
     # wwh
     # run(app=app, host=hostip, port=443, reloader=True, server='sslcherrypy')
 
-	# localhost
-	# run(app=app, host='0.0.0.0', port=3000, reloader=True, server='sslcherrypy')
+    # localhost
+    # run(app=app, host='0.0.0.0', port=3000, reloader=True, server='sslcherrypy')
 
     # localhost without ssl
     # run(app=app, host=hostip, port=8000, reloader=True, server='paste')

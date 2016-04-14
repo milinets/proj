@@ -1,7 +1,6 @@
 ###### Database utilities
 
-import psycopg2
-import psycopg2.extras
+import sqlite3 as sq
 import uuid
 import json
 import os
@@ -20,7 +19,7 @@ pg_conn_string = """
 # cursor = dbconn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 def connect_db():
-    return psycopg2.connect(pg_conn_string)
+    return sq.connect('example.db')
 
 def query_db(query, args=(), one=False):
     con = connect_db()
