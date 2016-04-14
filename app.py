@@ -317,16 +317,15 @@ server_names['sslcherrypy'] = SSLCherryPy
 debug(True)
 if __name__ == '__main__':
     thishost = platform.uname()
-    hostip = subprocess.check_output("hostname -I",shell=True).replace(' \n','')
+    # hostip = subprocess.check_output("hostname -I",shell=True).replace(' \n','')
 
-    # wwh
     # run(app=app, host=hostip, port=443, reloader=True, server='sslcherrypy')
 
     # localhost
-    # run(app=app, host='0.0.0.0', port=3000, reloader=True, server='sslcherrypy')
+    run(app=app, host='0.0.0.0', port=3000, reloader=True)
 
     # localhost without ssl
     # run(app=app, host=hostip, port=8000, reloader=True, server='paste')
 
-    from paste import httpserver
-    httpserver.serve(app, host='0.0.0.0', port=443, ssl_pem='./server.pem')
+    # from paste import httpserver
+    # httpserver.serve(app, host='0.0.0.0', port=443, ssl_pem='./server.pem')

@@ -1,6 +1,4 @@
 import bottle
-import psycopg2
-import psycopg2.extras
 import uuid
 import json
 import datetime
@@ -56,7 +54,7 @@ class TFcase(object):
         cur = conn.cursor()
         cur.execute("SELECT data from dba WHERE data->>'id' = %s",(case_id,))
         data = cur.fetchone()[0]
-        print data
+        print(data)
         data['deleted'] = True
         datastring = json.dumps(data)
         cur.execute("UPDATE dba SET data = %s WHERE data->>'id' = %s",(datastring, case_id))

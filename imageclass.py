@@ -1,8 +1,6 @@
 import datetime
 import uuid
 import bottle
-import psycopg2
-import psycopg2.extras
 import json
 from dbfuncs import connect_db, pg_conn_string
 
