@@ -39,11 +39,8 @@ app = SessionMiddleware(site, session_opts)
 @site.route('/static/<filepath:path>')
 def server_static(filepath):
     return static_file(filepath, root='./static')
-
-@site.route('/cases/<case_id>/<filename>')
-def server_case_image(case_id,filename):
-    return static_file(filename, root="./cases/"+case_id)
-
+    
+    
 @site.get('/')
 def index():
     return static_file('index.html',root=".")
