@@ -33,8 +33,6 @@ session_opts = {
 }
 
 app = SessionMiddleware(site, session_opts)
-thisuser = TFuser()
-tfcase = TFcase()
 
 ###### Static Routes
 

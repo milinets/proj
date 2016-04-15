@@ -14,12 +14,10 @@ pg_conn_string = """
                     user='postgres'
     """
 
-    
-# dictionary cursor
-# cursor = dbconn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
 def connect_db():
     return sq.connect('example.db')
+    
+
 
 def query_db(query, args=(), one=False):
     con = connect_db()
