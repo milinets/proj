@@ -133,6 +133,7 @@ def send_userpic(picture):
     response.content_type = "image/jpeg"
     return static_file(picture, root="./static/userimages/")
 
+
 ###### Search the database and return collection of cases         
 @site.post('/j/search')
 def jpostsearch():
