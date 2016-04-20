@@ -7,7 +7,7 @@ import os
 import socket
 
 def connect_db():
-    return sq.connect('example.db')
+    return sq.connect('data.db')
 
 def createTable(name):
     con = connect_db()
@@ -32,7 +32,7 @@ def show_rows(name):
             FROM {}
         """.format(name))
         for i in cur.fetchall():
-            print i
+            print(i)
 
 
 def query_db(query, args=(), one=False):
@@ -42,12 +42,10 @@ def query_db(query, args=(), one=False):
         cur.execute(query, args)
 
 
-import datetime as dt 
-import base64
-import random
+import uuid
 
 def gen_id():
-    return base64.urlsafe_b64encode(str(random.random()))[-10:]
+    return str(uuid.uuid4())
                 
 for i in range(10):
-    print gen_id()
+    print(gen_id()[-12:])
